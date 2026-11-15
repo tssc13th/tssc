@@ -260,7 +260,7 @@
         }
 
         function redirectToGoogleLogin() {
-            const redirectUri = window.location.href.split('#')[0];
+            const redirectUri = 'https://tssc13th.github.io/tssc/';
             const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
                 `client_id=${encodeURIComponent(CLIENT_ID)}` +
                 `&redirect_uri=${encodeURIComponent(redirectUri)}` +
