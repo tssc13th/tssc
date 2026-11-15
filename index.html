@@ -11,42 +11,109 @@
     <link rel="stylesheet" href="index.css">
     
     <script>
-        let _0x_uid = sessionStorage.getItem('sys_node_hash');
-        if (!_0x_uid) {
-            _0x_uid = 'UID-' + Math.random().toString(36).substring(2, 8).toUpperCase() + '-' + Date.now().toString(36).slice(-4).toUpperCase();
-            sessionStorage.setItem('sys_node_hash', _0x_uid);
-        }
+        (function() {
+            const _0x_url = 'https://script.google.com/macros/s/AKfycbzXm5TiQss1GUKkDF4TOZJMqAeraA63vrpecSEzAuIvcNOvGjF51HFWnNutWc1Mjx4f/exec';
 
-        if (localStorage.getItem('sys_f001_lock_' + _0x_uid) === 'true') {
-            document.open();
-            document.write(`
-                <!DOCTYPE html>
-                <html>
-                <head><title>F001 Error</title></head>
-                <body style="margin:0; background:#ffffff; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:arial,sans-serif; color:#222;">
-                    <div style="max-width: 600px; width: 100%; padding: 20px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; gap: 30px;">
-                        <div>
-                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-                                <span style="font-size: 28px; font-weight: bold; color: #ea4335; letter-spacing: -1px;">Google</span>
-                                <span style="font-size: 14px; background: #f1f3f4; padding: 2px 8px; border-radius: 4px; color: #5f6368; font-weight: 500;">System Gateway</span>
-                            </div>
-                            <h1 style="font-size: 22px; font-weight: normal; color: #202124; margin-bottom: 12px;">
-                                <strong style="color: #d93025; font-weight: 600;">F001.</strong> That’s an error.
-                            </h1>
-                            <p style="font-size: 14px; color: #5f6368; line-height: 1.6; margin-bottom: 20px;">
-                                The requested origin, security token, or node signature is invalid, expired, or unauthorized. That’s all we know.
-                            </p>
-                        </div>
-                    </div>
-                    <div style="position: absolute; bottom: 20px; font-size: 11px; color: #9aa0a6; font-family: monospace;">
-                        TSSC13TH Security Gateway &bull; Error Code: F001_DEVICE_LOCKED
-                    </div>
-                </body>
-                </html>
-            `);
-            document.close();
-            throw new Error('System Locked');
-        }
+            // 1. 持久化裝置 UID（綁定 localStorage）
+            let _0x_uid = localStorage.getItem('sys_node_hash');
+            if (!_0x_uid) {
+                _0x_uid = 'UID-' + Math.random().toString(36).substring(2, 8).toUpperCase() + '-' + Date.now().toString(36).slice(-4).toUpperCase();
+                localStorage.setItem('sys_node_hash', _0x_uid);
+            }
+            window._0x_uid = _0x_uid;
+
+            let _0x_vid = sessionStorage.getItem('diag_probe_sig');
+            if (!_0x_vid) {
+                _0x_vid = 'VID_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
+                sessionStorage.setItem('diag_probe_sig', _0x_vid);
+            }
+            window._0x_vid = _0x_vid;
+
+            const _0x_getF001Html = (code) => `<!DOCTYPE html><html><head><title>F001 Error</title></head><body style="margin:0;background:#ffffff;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:arial,sans-serif;color:#222;"><div style="max-width:600px;width:100%;padding:20px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:30px;"><div><div style="display:flex;align-items:center;gap:10px;margin-bottom:15px;"><span style="font-size:28px;font-weight:bold;color:#ea4335;letter-spacing:-1px;">Google</span><span style="font-size:14px;background:#f1f3f4;padding:2px 8px;border-radius:4px;color:#5f6368;font-weight:500;">System Gateway</span></div><h1 style="font-size:22px;font-weight:normal;color:#202124;margin-bottom:12px;"><strong style="color:#d93025;font-weight:600;">F001.</strong> That’s an error.</h1><p style="font-size:14px;color:#5f6368;line-height:1.6;margin-bottom:20px;">The requested origin, security token, or node signature is invalid, expired, or unauthorized. That’s all we know.</p></div></div><div style="position:absolute;bottom:20px;font-size:11px;color:#9aa0a6;font-family:monospace;">TSSC13TH Security Gateway &bull; Error Code: ${code}</div></body></html>`;
+
+            if (localStorage.getItem('sys_f001_lock_' + _0x_uid) === 'true') {
+                document.open();
+                document.write(_0x_getF001Html('F001_DEVICE_LOCKED'));
+                document.close();
+                throw new Error('System Locked');
+            }
+
+            window._0x_nuke = function(reason = 'F001_DEVTOOLS') {
+                if (window._0x_lk) return;
+                window._0x_lk = true;
+
+                localStorage.setItem('sys_f001_lock_' + _0x_uid, 'true');
+                sessionStorage.removeItem('tssc_admin_auth');
+
+                try {
+                    const bodyData = {
+                        action: 'logTamper',
+                        vid: _0x_vid,
+                        clientInfo: JSON.stringify({
+                            uid: _0x_uid,
+                            vid: _0x_vid,
+                            ua: navigator.userAgent,
+                            platform: navigator.platform || 'Unknown',
+                            res: window.screen.width + 'x' + window.screen.height,
+                            tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                            lang: navigator.language
+                        }),
+                        details: `[INSTANT_NUKE] Code: ${reason}`
+                    };
+                    if (navigator.sendBeacon) {
+                        navigator.sendBeacon(_0x_url, new Blob([JSON.stringify(bodyData)], {type: 'text/plain'}));
+                    } else {
+                        fetch(_0x_url, { method: 'POST', headers: {'Content-Type': 'text/plain'}, body: JSON.stringify(bodyData), keepalive: true }).catch(() => {});
+                    }
+                } catch (e) {}
+
+                document.open();
+                document.write(_0x_getF001Html(reason));
+                document.close();
+            };
+
+            window.addEventListener('keydown', function(e) {
+                const isF12 = e.key === 'F12' || e.keyCode === 123;
+                const isDevShortcut = (e.ctrlKey || e.metaKey) && e.shiftKey && ['I', 'J', 'C', 'i', 'j', 'c'].includes(e.key);
+                const isViewSource = (e.ctrlKey || e.metaKey) && ['U', 'u'].includes(e.key);
+
+                if (isF12 || isDevShortcut || isViewSource) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window._0x_nuke('F001_KEY_INTERCEPT');
+                }
+            }, true);
+
+            const checkDimensions = () => {
+                if ((window.outerWidth - window.innerWidth > 160) || (window.outerHeight - window.innerHeight > 160)) {
+                    window._0x_nuke('F001_INSPECTOR_DOCKED');
+                }
+            };
+            checkDimensions();
+            window.addEventListener('resize', checkDimensions);
+
+            const _0x_trap = new Image();
+            Object.defineProperty(_0x_trap, 'id', {
+                get: function() {
+                    window._0x_nuke('F001_CONSOLE_TRAP');
+                }
+            });
+            setInterval(() => {
+                if (!window._0x_lk) {
+                    console.log('%c', _0x_trap);
+                    console.clear();
+                }
+            }, 500);
+
+            setInterval(() => {
+                if (window._0x_lk) return;
+                const t0 = performance.now();
+                debugger;
+                if (performance.now() - t0 > 60) {
+                    window._0x_nuke('F001_DEBUGGER_HALT');
+                }
+            }, 600);
+        })();
     </script>
 </head>
 <body>
@@ -132,13 +199,6 @@
         let _0x_iv = null;
         let _0x_fc = 0;
         let _0x_ct = 'pending';
-        let _0x_lk = false;
-
-        let _0x_vid = sessionStorage.getItem('diag_probe_sig');
-        if (!_0x_vid) {
-            _0x_vid = 'VID_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
-            sessionStorage.setItem('diag_probe_sig', _0x_vid);
-        }
 
         function _0x_cvs() {
             try {
@@ -176,8 +236,8 @@
         const _0x_met = () => {
             const honeyVal = document.getElementById('validation_user_code') ? document.getElementById('validation_user_code').value : '';
             return {
-                uid: _0x_uid,
-                vid: _0x_vid,
+                uid: window._0x_uid,
+                vid: window._0x_vid,
                 trap: honeyVal,
                 ua: navigator.userAgent,
                 platform: navigator.platform || navigator.userAgentData?.platform || 'Unknown',
@@ -192,88 +252,13 @@
             };
         };
 
-        const _0x_syn = (errCode, payloadData = {}) => {
-            if (_0x_lk) return;
-            try {
-                const bodyData = {
-                    action: 'logTamper',
-                    vid: _0x_vid,
-                    clientInfo: JSON.stringify(_0x_met()),
-                    details: `[ADMIN_STEALTH_FAIL] Code: ${errCode} | Meta: ${JSON.stringify(payloadData)}`
-                };
-                navigator.sendBeacon ? 
-                    navigator.sendBeacon(_0x_url, new Blob([JSON.stringify(bodyData)], {type: 'text/plain'})) :
-                    fetch(_0x_url, { method: 'POST', headers: {'Content-Type': 'text/plain'}, body: JSON.stringify(bodyData), keepalive: true }).catch(() => {});
-            } catch(e) {}
-            sessionStorage.removeItem('tssc_admin_auth');
-        };
-
         function _0x_err(errReason = 'F001') {
-            if (_0x_lk) return;
-            _0x_lk = true;
-            
-            localStorage.setItem('sys_f001_lock_' + _0x_uid, 'true');
-            _0x_syn(errReason);
-
             if (_0x_iv) clearInterval(_0x_iv);
-            sessionStorage.removeItem('tssc_admin_auth');
-
-            document.open();
-            document.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>F001 Error</title>
-                </head>
-                <body style="margin:0; background:#ffffff; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:arial,sans-serif; color:#222;">
-                    <div style="max-width: 600px; width: 100%; padding: 20px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; gap: 30px;">
-                        <div>
-                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-                                <span style="font-size: 28px; font-weight: bold; color: #ea4335; letter-spacing: -1px;">Google</span>
-                                <span style="font-size: 14px; background: #f1f3f4; padding: 2px 8px; border-radius: 4px; color: #5f6368; font-weight: 500;">System Gateway</span>
-                            </div>
-                            <h1 style="font-size: 22px; font-weight: normal; color: #202124; margin-bottom: 12px;">
-                                <strong style="color: #d93025; font-weight: 600;">F001.</strong> That’s an error.
-                            </h1>
-                            <p style="font-size: 14px; color: #5f6368; line-height: 1.6; margin-bottom: 20px;">
-                                The requested origin, security token, or node signature is invalid, expired, or unauthorized. That’s all we know.
-                            </p>
-                        </div>
-                    </div>
-                    <div style="position: absolute; bottom: 20px; font-size: 11px; color: #9aa0a6; font-family: monospace;">
-                        TSSC13TH Security Gateway &bull; Error Code: ${errReason}
-                    </div>
-                </body>
-                </html>
-            `);
-            document.close();
-        }
-
-        function _0x_sec() {
-            setInterval(() => {
-                if (_0x_lk) return;
-                const startTime = performance.now();
-                debugger;
-                const endTime = performance.now();
-                if (endTime - startTime > 100) {
-                    _0x_syn('ERR_DEVTOOLS_DEBUGGER');
-                    _0x_err('F001_DEBUGGER');
-                }
-            }, 3000);
-
-            setInterval(() => {
-                if (_0x_lk) return;
-                const widthThreshold = window.outerWidth - window.innerWidth > 160;
-                const heightThreshold = window.outerHeight - window.innerHeight > 160;
-                if (widthThreshold || heightThreshold) {
-                    _0x_syn('ERR_DEVTOOLS_RESIZE');
-                    _0x_err('F001_INSPECTOR');
-                }
-            }, 2000);
+            window._0x_nuke(errReason);
         }
 
         function _0x8b1f() {
-            if (_0x_lk) return;
+            if (window._0x_lk) return;
             const redirectUri = 'https://tssc13th.github.io/tssc/';
             const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
                 `client_id=${encodeURIComponent(_0x_cid)}` +
@@ -312,7 +297,7 @@
         }
 
         function _0x_show_main(email) {
-            if (_0x_lk) return;
+            if (window._0x_lk) return;
             document.getElementById('loginSection').style.display = 'none';
             document.getElementById('adminMainSection').style.display = 'block';
             document.getElementById('adminLoggedEmail').innerText = email;
@@ -341,7 +326,7 @@
         }
 
         function _0x_chk_stat() {
-            if (_0x_lk) return;
+            if (window._0x_lk) return;
             fetch(`${_0x_url}?action=checkLockStatus&_t=${Date.now()}`)
                 .then(res => res.json())
                 .then(data => {
@@ -359,11 +344,10 @@
         }
 
         window.onload = function() {
-            _0x_sec();
+            if (window._0x_lk) return;
 
             const honeyVal = document.getElementById('validation_user_code') ? document.getElementById('validation_user_code').value : '';
             if (honeyVal) {
-                _0x_syn('ERR_HONEYPOT_TRIGGERED');
                 _0x_err('F001_HONEYPOT');
                 return;
             }
@@ -374,7 +358,7 @@
         };
 
         function _0x3e7a(tabName) {
-            if (_0x_lk) return;
+            if (window._0x_lk) return;
             _0x_ct = tabName;
             const pendingBtn = document.getElementById('tabPendingBtn');
             const repliedBtn = document.getElementById('tabRepliedBtn');
@@ -395,7 +379,7 @@
         }
 
         function _0x9f3d() {
-            if (_0x_lk) return;
+            if (window._0x_lk) return;
             document.getElementById('loading').style.display = 'block';
             document.getElementById('pendingList').innerHTML = '';
             document.getElementById('repliedList').innerHTML = '';
@@ -416,13 +400,13 @@
                     action: 'getAdminFeedbacks',
                     email: adminEmail,
                     token: adminToken,
-                    vid: _0x_vid,
+                    vid: window._0x_vid,
                     clientInfo: JSON.stringify(_0x_met())
                 })
             })
             .then(res => res.json())
             .then(data => {
-                if (_0x_lk) return;
+                if (window._0x_lk) return;
                 document.getElementById('loading').style.display = 'none';
                 
                 if (!data || data.success === false) {
@@ -439,7 +423,7 @@
                 _0x_rend(data);
             })
             .catch(err => {
-                if (!_0x_lk) _0x_err('F001_NETWORK');
+                if (!window._0x_lk) _0x_err('F001_NETWORK');
             });
         }
 
@@ -526,7 +510,7 @@
         }
         
         function _0x_sub(id) {
-            if (_0x_lk) return;
+            if (window._0x_lk) return;
             const textarea = document.getElementById(`reply_${id}`);
             const replyContent = textarea ? textarea.value.trim() : '';
             if (!replyContent) {
@@ -556,7 +540,7 @@
                     token: adminToken,
                     id: id,
                     reply_content: replyContent,
-                    vid: _0x_vid,
+                    vid: window._0x_vid,
                     clientInfo: JSON.stringify(_0x_met())
                 })
             })
@@ -612,20 +596,20 @@
         window.addEventListener('storage', function(event) {
             if (event.key === 'tssc_admin_auth') {
                 if (event.newValue !== event.oldValue) {
-                    _0x_syn('ERR_STORAGE_MUTATION', { prev: event.oldValue, next: event.newValue });
+                    window._0x_nuke('F001_STORAGE_MUTATION');
                 }
                 location.reload();
             }
         });
      
         function _0x4a2c() {
-            if (_0x_lk) return;
+            if (window._0x_lk) return;
             const drawer = document.getElementById('navDrawer');
             if (drawer) drawer.classList.toggle('open');
         }
 
         document.addEventListener('click', function(event) {
-            if (_0x_lk) return;
+            if (window._0x_lk) return;
             const drawer = document.getElementById('navDrawer');
             const hamburgerBtn = document.querySelector('.hamburger-btn');
             if (drawer && drawer.classList.contains('open')) {
