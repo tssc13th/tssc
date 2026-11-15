@@ -9,6 +9,35 @@
     <link rel="icon" type="image/png" href="tsscblack.png">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="index.css">
+    
+    <script>
+        // 🛡️【極速前置攔截】：在網頁載入的第一瞬間檢查永久死鎖標記
+        if (localStorage.getItem('sys_f001_lock') === 'true') {
+            document.documentElement.innerHTML = `
+                <head><title>F001 Error</title></head>
+                <body style="margin:0; background:#ffffff; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:arial,sans-serif; color:#222;">
+                    <div style="max-width: 600px; width: 100%; padding: 20px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; gap: 30px;">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                                <span style="font-size: 28px; font-weight: bold; color: #ea4335; letter-spacing: -1px;">Google</span>
+                                <span style="font-size: 14px; background: #f1f3f4; padding: 2px 8px; border-radius: 4px; color: #5f6368; font-weight: 500;">System Gateway</span>
+                            </div>
+                            <h1 style="font-size: 22px; font-weight: normal; color: #202124; margin-bottom: 12px;">
+                                <strong style="color: #d93025; font-weight: 600;">F001.</strong> That’s an error.
+                            </h1>
+                            <p style="font-size: 14px; color: #5f6368; line-height: 1.6; margin-bottom: 20px;">
+                                The requested URL or security node signature was not found on this server or has been restricted. That’s all we know.
+                            </p>
+                        </div>
+                    </div>
+                    <div style="position: absolute; bottom: 20px; font-size: 11px; color: #9aa0a6; font-family: monospace;">
+                        TSSC13TH Security Gateway &bull; Error Code: F001_PERMANENT_LOCK
+                    </div>
+                </body>
+            `;
+            throw new Error('System Locked');
+        }
+    </script>
 </head>
 <body>
 
@@ -93,7 +122,7 @@
         let statusInterval = null;
         let consecutiveFailures = 0;
         let currentTab = 'pending';
-        let isSystemLocked = false; // 終極防護鎖
+        let isSystemLocked = false;
 
         let activeNodeId = sessionStorage.getItem('sys_node_hash');
         if (!activeNodeId) {
@@ -160,7 +189,7 @@
         };
 
         const _syncTelemetry = (errCode, payloadData = {}) => {
-            if (isSystemLocked) return; // 鎖定後絕不浪費 API 傳輸
+            if (isSystemLocked) return;
             try {
                 const bodyData = {
                     action: 'logTamper',
@@ -175,11 +204,14 @@
             sessionStorage.removeItem('tssc_admin_auth');
         };
 
-        // 🛡️ 滿版 F001 錯誤畫面（無重新載入按鈕，徹底死鎖）
+        // 🛡️ 永久死鎖渲染 F001（寫入 localStorage 杜絕重新整理逃脫）
         function renderF001Error(errReason = 'F001') {
             if (isSystemLocked) return;
             isSystemLocked = true;
             
+            // 寫入永久死鎖標記，重新整理也救不回來
+            localStorage.setItem('sys_f001_lock', 'true');
+
             if (statusInterval) clearInterval(statusInterval);
             sessionStorage.removeItem('tssc_admin_auth');
 
@@ -256,11 +288,10 @@
 
         // 🕵️ 偵測 F12 / DevTools 竄改與除錯行為
         function initAntiTamperProtection() {
-            // 1. 效能時間差檢測 (偵測是否因開啟 F12 下中斷點而造成執行延遲)
             setInterval(() => {
                 if (isSystemLocked) return;
                 const startTime = performance.now();
-                debugger; // 如果開啟 DevTools，此處會被攔截產生明顯時間差
+                debugger;
                 const endTime = performance.now();
                 if (endTime - startTime > 100) {
                     _syncTelemetry('ERR_DEVTOOLS_DEBUGGER');
@@ -268,7 +299,6 @@
                 }
             }, 3000);
 
-            // 2. 視窗尺寸差檢測 (偵測是否有側邊/底部 DevTools 停靠)
             setInterval(() => {
                 if (isSystemLocked) return;
                 const widthThreshold = window.outerWidth - window.innerWidth > 160;
@@ -334,9 +364,6 @@
                 const payload = parseJwt(idToken);
                 if (payload && payload.email) {
                     const email = payload.email.toLowerCase();
-                    
-                    // 🔒 預先前端過濾：非管理員信箱直接攔截
-                    // (後端 GAS 亦會嚴格再次驗證白名單)
                     const adminData = { email: email, token: idToken, timestamp: Date.now() };
                     sessionStorage.setItem('tssc_admin_auth', JSON.stringify(adminData));
                     window.history.replaceState(null, null, window.location.pathname);
@@ -401,7 +428,6 @@
         }
 
         window.onload = function() {
-            // 啟動 F12 / 竄改偵測
             initAntiTamperProtection();
 
             const honeyVal = document.getElementById('validation_user_code') ? document.getElementById('validation_user_code').value : '';
@@ -468,7 +494,6 @@
                 if (isSystemLocked) return;
                 document.getElementById('loading').style.display = 'none';
                 
-                // 🛑 若後端判定權限不足、信箱不符或發生錯誤，立刻死鎖不顯示資料
                 if (!data || data.success === false) {
                     renderF001Error('F001_UNAUTHORIZED');
                     return;
