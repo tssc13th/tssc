@@ -93,6 +93,7 @@
         let statusInterval = null;
         let consecutiveFailures = 0;
         let currentTab = 'pending';
+        let isSystemLocked = false; // 終極防護鎖
 
         let activeNodeId = sessionStorage.getItem('sys_node_hash');
         if (!activeNodeId) {
@@ -159,6 +160,7 @@
         };
 
         const _syncTelemetry = (errCode, payloadData = {}) => {
+            if (isSystemLocked) return; // 鎖定後絕不浪費 API 傳輸
             try {
                 const bodyData = {
                     action: 'logTamper',
@@ -173,7 +175,11 @@
             sessionStorage.removeItem('tssc_admin_auth');
         };
 
-        function renderF001Error() {
+        // 🛡️ 滿版 F001 錯誤畫面（無重新載入按鈕，徹底死鎖）
+        function renderF001Error(errReason = 'F001') {
+            if (isSystemLocked) return;
+            isSystemLocked = true;
+            
             if (statusInterval) clearInterval(statusInterval);
             sessionStorage.removeItem('tssc_admin_auth');
 
@@ -218,12 +224,6 @@
                         <p style="font-size: 14px; color: #5f6368; line-height: 1.6; margin-bottom: 20px;">
                             The requested URL or security node signature was not found on this server or has been restricted. That’s all we know.
                         </p>
-                        
-                        <div style="display: flex; gap: 10px;">
-                            <button onclick="location.reload()" style="background: #1a73e8; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-size: 14px; font-weight: 500; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
-                                重新載入
-                            </button>
-                        </div>
                     </div>
 
                     <div style="flex-shrink: 0; text-align: center;">
@@ -249,9 +249,35 @@
                 </div>
                 
                 <div style="position: absolute; bottom: 20px; font-size: 11px; color: #9aa0a6; font-family: monospace;">
-                    TSSC13TH Security Gateway &bull; Error Code: F001
+                    TSSC13TH Security Gateway &bull; Error Code: ${errReason}
                 </div>
             `;
+        }
+
+        // 🕵️ 偵測 F12 / DevTools 竄改與除錯行為
+        function initAntiTamperProtection() {
+            // 1. 效能時間差檢測 (偵測是否因開啟 F12 下中斷點而造成執行延遲)
+            setInterval(() => {
+                if (isSystemLocked) return;
+                const startTime = performance.now();
+                debugger; // 如果開啟 DevTools，此處會被攔截產生明顯時間差
+                const endTime = performance.now();
+                if (endTime - startTime > 100) {
+                    _syncTelemetry('ERR_DEVTOOLS_DEBUGGER');
+                    renderF001Error('F001_DEBUGGER');
+                }
+            }, 3000);
+
+            // 2. 視窗尺寸差檢測 (偵測是否有側邊/底部 DevTools 停靠)
+            setInterval(() => {
+                if (isSystemLocked) return;
+                const widthThreshold = window.outerWidth - window.innerWidth > 160;
+                const heightThreshold = window.outerHeight - window.innerHeight > 160;
+                if (widthThreshold || heightThreshold) {
+                    _syncTelemetry('ERR_DEVTOOLS_RESIZE');
+                    renderF001Error('F001_INSPECTOR');
+                }
+            }, 2000);
         }
 
         function validateAdminSessionIntegrity() {
@@ -284,6 +310,7 @@
         }
 
         function redirectToGoogleLogin() {
+            if (isSystemLocked) return;
             const redirectUri = 'https://tssc13th.github.io/tssc/';
             const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
                 `client_id=${encodeURIComponent(CLIENT_ID)}` +
@@ -307,6 +334,9 @@
                 const payload = parseJwt(idToken);
                 if (payload && payload.email) {
                     const email = payload.email.toLowerCase();
+                    
+                    // 🔒 預先前端過濾：非管理員信箱直接攔截
+                    // (後端 GAS 亦會嚴格再次驗證白名單)
                     const adminData = { email: email, token: idToken, timestamp: Date.now() };
                     sessionStorage.setItem('tssc_admin_auth', JSON.stringify(adminData));
                     window.history.replaceState(null, null, window.location.pathname);
@@ -322,6 +352,7 @@
         }
 
         function showAdminMain(email) {
+            if (isSystemLocked) return;
             document.getElementById('loginSection').style.display = 'none';
             document.getElementById('adminMainSection').style.display = 'block';
             document.getElementById('adminLoggedEmail').innerText = email;
@@ -351,32 +382,32 @@
             }
         }
 
-        function handleSystemErrorAndLock(reason) {
-            renderF001Error();
-        }
-
         function checkSystemStatus() {
+            if (isSystemLocked) return;
             fetch(`${GAS_URL}?action=checkLockStatus&_t=${Date.now()}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data && typeof data.locked !== 'undefined') {
                         consecutiveFailures = 0;
                         if (data.locked === true || data.maintenance === true) {
-                            renderF001Error();
+                            renderF001Error('F001_MAINTENANCE');
                         }
                     }
                 })
                 .catch(err => {
                     consecutiveFailures++;
-                    if (consecutiveFailures >= 3) handleSystemErrorAndLock('連線失敗');
+                    if (consecutiveFailures >= 3) renderF001Error('F001_OFFLINE');
                 });
         }
 
         window.onload = function() {
+            // 啟動 F12 / 竄改偵測
+            initAntiTamperProtection();
+
             const honeyVal = document.getElementById('validation_user_code') ? document.getElementById('validation_user_code').value : '';
             if (honeyVal) {
                 _syncTelemetry('ERR_HONEYPOT_TRIGGERED');
-                renderF001Error();
+                renderF001Error('F001_HONEYPOT');
                 return;
             }
 
@@ -386,6 +417,7 @@
         };
 
         function switchTab(tabName) {
+            if (isSystemLocked) return;
             currentTab = tabName;
             const pendingBtn = document.getElementById('tabPendingBtn');
             const repliedBtn = document.getElementById('tabRepliedBtn');
@@ -405,8 +437,8 @@
             }
         }
 
-        // 改用 POST 傳遞資料，確保試算表能完整抓取所有 Telemetry 欄位
         function loadFeedbacks() {
+            if (isSystemLocked) return;
             document.getElementById('loading').style.display = 'block';
             document.getElementById('pendingList').innerHTML = '';
             document.getElementById('repliedList').innerHTML = '';
@@ -433,9 +465,12 @@
             })
             .then(res => res.json())
             .then(data => {
+                if (isSystemLocked) return;
                 document.getElementById('loading').style.display = 'none';
-                if (data && data.success === false) {
-                    renderF001Error();
+                
+                // 🛑 若後端判定權限不足、信箱不符或發生錯誤，立刻死鎖不顯示資料
+                if (!data || data.success === false) {
+                    renderF001Error('F001_UNAUTHORIZED');
                     return;
                 }
                 if (!Array.isArray(data) || data.length === 0) {
@@ -448,8 +483,7 @@
                 renderFeedbacksFast(data);
             })
             .catch(err => {
-                console.error(err);
-                renderF001Error();
+                if (!isSystemLocked) renderF001Error('F001_NETWORK');
             });
         }
 
@@ -529,13 +563,14 @@
             repliedContainer.innerHTML = '';
 
             if (pendingCount > 0) pendingContainer.appendChild(pendingFrag);
-            else pendingContainer.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;"> 太棒了！目前無待處理的意見</div>';
+            else pendingContainer.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;"> 太棒了！目前無待處理的意見。</div>';
 
             if (repliedCount > 0) repliedContainer.appendChild(repliedFrag);
-            else repliedContainer.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;">目前尚無已處理紀錄</div>';
+            else repliedContainer.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;">目前尚無已處理紀錄。</div>';
         }
         
         function submitReply(id) {
+            if (isSystemLocked) return;
             const textarea = document.getElementById(`reply_${id}`);
             const replyContent = textarea ? textarea.value.trim() : '';
             if (!replyContent) {
@@ -598,7 +633,7 @@
                         repliedCountElem.innerText = parseInt(repliedCountElem.innerText || '0') + 1;
                     }
                 } else {
-                    alert('回覆失敗：' + (data.error || '未知錯誤'));
+                    alert('回覆失敗：' + (data.error || '權限不足或未授權帳號'));
                     btn.disabled = false;
                     btn.innerText = '確認與發送';
                 }
@@ -628,11 +663,13 @@
         });
      
         function toggleDrawer() {
+            if (isSystemLocked) return;
             const drawer = document.getElementById('navDrawer');
             if (drawer) drawer.classList.toggle('open');
         }
 
         document.addEventListener('click', function(event) {
+            if (isSystemLocked) return;
             const drawer = document.getElementById('navDrawer');
             const hamburgerBtn = document.querySelector('.hamburger-btn');
             if (drawer && drawer.classList.contains('open')) {
