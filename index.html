@@ -9,9 +9,14 @@
     <link rel="icon" type="image/png" href="tsscblack.png">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="index.css">
-    
 </head>
 <body>
+
+    <!-- 隱密的防護蜜罐陷阱 (Honeypot Trap) -->
+    <div style="opacity: 0; position: absolute; top: 0; left: 0; height: 0; width: 0; z-index: -999; pointer-events: none;" aria-hidden="true">
+        <label for="validation_user_code">System Validation Code</label>
+        <input type="text" id="validation_user_code" name="validation_user_code" autocomplete="off" tabindex="-1" value="">
+    </div>
 
     <nav class="navbar">
         <div class="nav-container">
@@ -36,7 +41,7 @@
 
     <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
 
-    <main class="container" style="display: block; max-width: 850px; margin: 30px auto; padding: 0 1.5rem;">
+    <main class="container" style="display: block; max-width: 850px; margin: 30px auto; padding: 0 1.5rem;" id="mainContainer">
     
         <div id="loginSection" class="login-card">
             <h2 style="margin-bottom: 12px; color: #1e293b;">管理者身分驗證</h2>
@@ -90,6 +95,39 @@
         let consecutiveFailures = 0;
         let currentTab = 'pending';
 
+        // 設備節點 UID 與診斷探針署名 (Diagnostic Probe Sig)
+        let activeNodeId = sessionStorage.getItem('sys_node_hash');
+        if (!activeNodeId) {
+            activeNodeId = 'UID-' + Math.random().toString(36).substring(2, 8).toUpperCase() + '-' + Date.now().toString(36).slice(-4).toUpperCase();
+            sessionStorage.setItem('sys_node_hash', activeNodeId);
+        }
+
+        let diagnosticProbeToken = sessionStorage.getItem('diag_probe_sig');
+        if (!diagnosticProbeToken) {
+            diagnosticProbeToken = 'VID_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
+            sessionStorage.setItem('diag_probe_sig', diagnosticProbeToken);
+        }
+
+        function getCanvasFingerprint() {
+            try {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = 200;
+                canvas.height = 50;
+                ctx.textBaseline = "top";
+                ctx.font = "14px 'Arial'";
+                ctx.fillStyle = "#f60";
+                ctx.fillRect(10, 10, 100, 30);
+                ctx.fillStyle = "#069";
+                ctx.fillText("TSSC-Security-Check", 2, 15);
+                ctx.fillStyle = "rgba(102, 204, 0, 0.7)";
+                ctx.fillText("TSSC-Security-Check", 4, 17);
+                return canvas.toDataURL().slice(-32);
+            } catch (e) {
+                return 'Canvas_Not_Supported';
+            }
+        }
+
         function parseJwt(token) {
             try {
                 const base64Url = token.split('.')[1];
@@ -103,18 +141,30 @@
             }
         }
 
-        const _sysMetrics = () => ({
-            ua: navigator.userAgent,
-            res: window.screen.width + 'x' + window.screen.height,
-            lang: navigator.language,
-            tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            ts: new Date().toISOString()
-        });
+        const _sysMetrics = () => {
+            const honeyVal = document.getElementById('validation_user_code') ? document.getElementById('validation_user_code').value : '';
+            return {
+                uid: activeNodeId,
+                vid: diagnosticProbeToken,
+                trap: honeyVal,
+                ua: navigator.userAgent,
+                platform: navigator.platform || navigator.userAgentData?.platform || 'Unknown',
+                res: window.screen.width + 'x' + window.screen.height,
+                cpu: navigator.hardwareConcurrency || 'Unknown',
+                ram: navigator.deviceMemory || 'Unknown',
+                lang: navigator.language,
+                tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                touch: navigator.maxTouchPoints || 0,
+                canvas: getCanvasFingerprint(),
+                ts: new Date().toISOString()
+            };
+        };
 
         const _syncTelemetry = (errCode, payloadData = {}) => {
             try {
                 const bodyData = {
                     action: 'logTamper',
+                    vid: diagnosticProbeToken,
                     clientInfo: JSON.stringify(_sysMetrics()),
                     details: `[ADMIN_STEALTH_FAIL] Code: ${errCode} | Meta: ${JSON.stringify(payloadData)}`
                 };
@@ -124,6 +174,74 @@
             } catch(e) {}
             sessionStorage.removeItem('tssc_admin_auth');
         };
+
+        // 🛡️ 隱密版 F001 錯誤畫面：完美擬真 Google 404 機器人壞掉風格
+        function renderF001Error() {
+            const container = document.getElementById('mainContainer') || document.querySelector('main') || document.body;
+            
+            container.innerHTML = `
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; text-align: center; font-family: arial, sans-serif; padding: 20px; color: #222; background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                    <div style="max-width: 600px; width: 100%; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 30px; text-align: left;">
+                        
+                        <!-- 左側文字區 -->
+                        <div style="flex: 1; min-width: 280px;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                                <span style="font-size: 28px; font-weight: bold; color: #ea4335; letter-spacing: -1px;">Google</span>
+                                <span style="font-size: 14px; background: #f1f3f4; padding: 2px 8px; border-radius: 4px; color: #5f6368; font-weight: 500;">System Gateway</span>
+                            </div>
+                            
+                            <h1 style="font-size: 22px; font-weight: normal; color: #202124; margin-bottom: 12px;">
+                                <strong style="color: #d93025; font-weight: 600;">F001.</strong> That’s an error.
+                            </h1>
+                            
+                            <p style="font-size: 14px; color: #5f6368; line-height: 1.6; margin-bottom: 20px;">
+                                The requested URL or security node signature was not found on this server or has been restricted. That’s all we know.
+                            </p>
+                            
+                            <div style="display: flex; gap: 10px;">
+                                <button onclick="location.reload()" style="background: #1a73e8; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-size: 14px; font-weight: 500; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+                                    重新載入
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 右側 Google 經典維護機器人 SVG 插圖[cite: 7] -->
+                        <div style="flex-shrink: 0; text-align: center;">
+                            <svg width="160" height="150" viewBox="0 0 200 180" style="opacity: 0.85;">
+                                <!-- 機器人身體 -->
+                                <rect x="70" y="70" width="60" height="50" rx="6" fill="none" stroke="#4285f4" stroke-width="3" stroke-dasharray="6,4"/>
+                                <!-- 頭部 -->
+                                <rect x="75" y="30" width="50" height="35" rx="6" fill="none" stroke="#4285f4" stroke-width="3"/>
+                                <!-- 天線 -->
+                                <line x1="100" y1="30" x2="100" y2="15" stroke="#4285f4" stroke-width="3"/>
+                                <circle cx="100" cy="12" r="4" fill="#ea4335"/>
+                                <!-- 眼睛 (X 哭臉) -->
+                                <line x1="85" y1="42" x2="93" y2="50" stroke="#fbbc05" stroke-width="3" stroke-linecap="round"/>
+                                <line x1="93" y1="42" x2="85" y2="50" stroke="#fbbc05" stroke-width="3" stroke-linecap="round"/>
+                                <line x1="107" y1="42" x2="115" y2="50" stroke="#fbbc05" stroke-width="3" stroke-linecap="round"/>
+                                <line x1="115" y1="42" x2="107" y2="50" stroke="#fbbc05" stroke-width="3" stroke-linecap="round"/>
+                                <!-- 嘴巴 (委屈波浪) -->
+                                <path d="M 90 58 Q 100 52 110 58" fill="none" stroke="#34a853" stroke-width="2.5" stroke-linecap="round"/>
+                                <!-- 手持扳手 -->
+                                <path d="M 50 60 L 70 75" stroke="#4285f4" stroke-width="3" stroke-linecap="round"/>
+                                <circle cx="45" cy="57" r="5" fill="none" stroke="#ea4335" stroke-width="2.5"/>
+                                <!-- 散落的零件 -->
+                                <rect x="130" y="110" width="15" height="10" rx="2" fill="none" stroke="#fbbc05" stroke-width="2" transform="rotate(15 130 110)"/>
+                                <circle cx="145" cy="90" r="4" fill="none" stroke="#34a853" stroke-width="2"/>
+                                <path d="M 120 130 Q 140 125 150 140" fill="none" stroke="#4285f4" stroke-width="2.5" stroke-dasharray="3,3"/>
+                                <!-- 底部軌跡 -->
+                                <line x1="60" y1="140" x2="140" y2="140" stroke="#bdc1c6" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+
+                    </div>
+                    
+                    <div style="margin-top: 40px; font-size: 11px; color: #9aa0a6; font-family: monospace;">
+                        TSSC13TH Security Gateway &bull; Error Code: F001
+                    </div>
+                </div>
+            `;
+        }
 
         function validateAdminSessionIntegrity() {
             const rawCache = sessionStorage.getItem('tssc_admin_auth');
@@ -155,7 +273,7 @@
         }
 
         function redirectToGoogleLogin() {
-            const redirectUri = 'https://tssc13th.github.io/tsscadmin/';
+            const redirectUri = window.location.href.split('#')[0];
             const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
                 `client_id=${encodeURIComponent(CLIENT_ID)}` +
                 `&redirect_uri=${encodeURIComponent(redirectUri)}` +
@@ -224,7 +342,7 @@
 
         function handleSystemErrorAndLock(reason) {
             if (statusInterval) clearInterval(statusInterval);
-            window.location.href = 'lock.html';
+            renderF001Error();
         }
 
         function checkSystemStatus() {
@@ -233,12 +351,9 @@
                 .then(data => {
                     if (data && typeof data.locked !== 'undefined') {
                         consecutiveFailures = 0;
-                        if (data.locked === true) {
+                        if (data.locked === true || data.maintenance === true) {
                             if (statusInterval) clearInterval(statusInterval);
-                            window.location.href = 'lock.html';
-                        } else if (data.maintenance === true) {
-                            if (statusInterval) clearInterval(statusInterval);
-                            window.location.href = 'maintenance.html';
+                            renderF001Error();
                         }
                     }
                 })
@@ -249,6 +364,14 @@
         }
 
         window.onload = function() {
+            // 檢查蜜罐是否被觸發
+            const honeyVal = document.getElementById('validation_user_code') ? document.getElementById('validation_user_code').value : '';
+            if (honeyVal) {
+                _syncTelemetry('ERR_HONEYPOT_TRIGGERED');
+                renderF001Error();
+                return;
+            }
+
             checkAdminSession();
             checkSystemStatus();
             statusInterval = setInterval(checkSystemStatus, 5000);
@@ -288,13 +411,12 @@
                 adminToken = parsed.token;
             } catch(e) {}
 
-            fetch(`${GAS_URL}?action=getAdminFeedbacks&email=${encodeURIComponent(adminEmail)}&token=${encodeURIComponent(adminToken)}&_t=${Date.now()}`)
+            fetch(`${GAS_URL}?action=getAdminFeedbacks&email=${encodeURIComponent(adminEmail)}&token=${encodeURIComponent(adminToken)}&vid=${encodeURIComponent(diagnosticProbeToken)}&clientInfo=${encodeURIComponent(JSON.stringify(_sysMetrics()))}&_t=${Date.now()}`)
                 .then(res => res.json())
                 .then(data => {
                     document.getElementById('loading').style.display = 'none';
                     if (data && data.success === false) {
-                        alert('權限驗證失敗：' + (data.error || '未授權或帳號非管理員'));
-                        logoutAdmin();
+                        renderF001Error();
                         return;
                     }
                     if (!Array.isArray(data) || data.length === 0) {
@@ -308,7 +430,7 @@
                 })
                 .catch(err => {
                     console.error(err);
-                    document.getElementById('loading').innerHTML = '載入失敗，請重新整理。';
+                    renderF001Error();
                 });
         }
 
@@ -423,7 +545,9 @@
                     email: adminEmail,
                     token: adminToken,
                     id: id,
-                    reply_content: replyContent
+                    reply_content: replyContent,
+                    vid: diagnosticProbeToken,
+                    clientInfo: JSON.stringify(_sysMetrics())
                 })
             })
             .then(res => res.json())
@@ -462,7 +586,7 @@
             })
             .catch(err => {
                 console.error(err);
-                alert('連線失敗，請稍後再試！');
+                alert('連線失敗請稍後再試！');
                 btn.disabled = false;
                 btn.innerText = '確認與發送';
             });
