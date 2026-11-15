@@ -14,6 +14,10 @@
         (function() {
             const _0x_url = 'https://script.google.com/macros/s/AKfycbzXm5TiQss1GUKkDF4TOZJMqAeraA63vrpecSEzAuIvcNOvGjF51HFWnNutWc1Mjx4f/exec';
 
+            // 清除歷史殘留的鎖定違規標記，避免無限鎖死
+            localStorage.removeItem('sys_f001_lock_violation');
+
+            // 全局快取 IP 變數
             window._0x_cached_ip = localStorage.getItem('cached_client_ip') || 'Unknown IP';
             fetch('https://api.ipify.org?format=json')
                 .then(res => res.json())
@@ -24,18 +28,15 @@
                     }
                 }).catch(() => {});
 
+            // UID 嚴格檢查與自動修復機制
             let _0x_uid = localStorage.getItem('sys_node_hash');
             if (!_0x_uid || (!_0x_uid.startsWith('UID-') && !_0x_uid.startsWith('NODE-'))) {
-                try {
-                    const f303Data = { action: 'reportF303', uid: _0x_uid || 'MISSING_UID', clientIp: window._0x_cached_ip, details: '[F303_UID_TAMPER_OR_MISSING]' };
-                    navigator.sendBeacon ? navigator.sendBeacon(_0x_url, new Blob([JSON.stringify(f303Data)], {type: 'text/plain'})) : fetch(_0x_url, {method: 'POST', body: JSON.stringify(f303Data), keepalive:true}).catch(()=>{});
-                } catch(e){}
-                localStorage.setItem('sys_f001_lock_violation', 'true');
-            }
-
-            if (!_0x_uid) {
                 _0x_uid = 'UID-' + Math.random().toString(36).substring(2, 8).toUpperCase() + '-' + Date.now().toString(36).slice(-4).toUpperCase();
                 localStorage.setItem('sys_node_hash', _0x_uid);
+                try {
+                    const f303Data = { action: 'reportF303', uid: _0x_uid, clientIp: window._0x_cached_ip, details: '[F303_UID_AUTO_REPAIRED]' };
+                    navigator.sendBeacon ? navigator.sendBeacon(_0x_url, new Blob([JSON.stringify(f303Data)], {type: 'text/plain'})) : fetch(_0x_url, {method: 'POST', body: JSON.stringify(f303Data), keepalive:true}).catch(()=>{});
+                } catch(e){}
             }
             window._0x_uid = _0x_uid;
 
@@ -47,19 +48,13 @@
             window._0x_vid = _0x_vid;
 
             localStorage.removeItem('sys_f001_lock_' + _0x_uid);
-            if (localStorage.getItem('sys_f001_lock_violation') === 'true') {
-                localStorage.removeItem('sys_f001_lock_violation');
-                document.open();
-                document.write(_0x_getF001Html('F303'));
-                document.close();
-                throw new Error('F303 Violation');
-            }
 
             function _0x_getF001Html(code) {
                 return `<!DOCTYPE html><html><head><title>F001 Error</title></head><body style="margin:0;background:#ffffff;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:arial,sans-serif;color:#222;"><div style="max-width:700px;width:100%;padding:20px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:20px;"><div><div style="display:flex;align-items:center;gap:10px;margin-bottom:15px;"><span style="font-size:32px;font-weight:bold;color:#ea4335;letter-spacing:-1px;">Google</span></div><h1 style="font-size:24px;font-weight:normal;color:#202124;margin-bottom:12px;"><strong style="color:#d93025;font-weight:600;">F001.</strong> That’s an error.</h1><p style="font-size:14px;color:#5f6368;line-height:1.6;margin-bottom:20px;">The requested origin, security token, or node signature is invalid, expired, or unauthorized. That’s all we know.</p></div><div><img src="https://www.google.com/images/errors/robot.png" alt="Google Robot" style="width:160px;height:auto;"></div></div><div style="position:absolute;bottom:20px;font-size:11px;color:#9aa0a6;font-family:monospace;">TSSC13TH Security Gateway &bull; Error Code: ${code}</div></body></html>`;
             }
             window._0x_getF001Html = _0x_getF001Html;
 
+            // 實時向後端查詢是否被列入 Blacklist，並帶上 clientIp
             setTimeout(() => {
                 fetch(`${_0x_url}?action=checkBlacklist&uid=${_0x_uid}&clientIp=${encodeURIComponent(window._0x_cached_ip)}&_t=${Date.now()}`)
                     .then(res => res.json())
