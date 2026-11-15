@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="index.css">
     
     <script>
-        // 🛡️【極速前置攔截】：在網頁載入的第一瞬間檢查永久死鎖標記
         if (localStorage.getItem('sys_f001_lock') === 'true') {
             document.documentElement.innerHTML = `
                 <head><title>F001 Error</title></head>
@@ -26,7 +25,7 @@
                                 <strong style="color: #d93025; font-weight: 600;">F001.</strong> That’s an error.
                             </h1>
                             <p style="font-size: 14px; color: #5f6368; line-height: 1.6; margin-bottom: 20px;">
-                                The requested URL or security node signature was not found on this server or has been restricted. That’s all we know.
+                                The requested origin, security token, or node signature is invalid, expired, or unauthorized. That’s all we know.
                             </p>
                         </div>
                     </div>
@@ -204,12 +203,10 @@
             sessionStorage.removeItem('tssc_admin_auth');
         };
 
-        // 🛡️ 永久死鎖渲染 F001（寫入 localStorage 杜絕重新整理逃脫）
         function renderF001Error(errReason = 'F001') {
             if (isSystemLocked) return;
             isSystemLocked = true;
             
-            // 寫入永久死鎖標記，重新整理也救不回來
             localStorage.setItem('sys_f001_lock', 'true');
 
             if (statusInterval) clearInterval(statusInterval);
@@ -254,7 +251,7 @@
                         </h1>
                         
                         <p style="font-size: 14px; color: #5f6368; line-height: 1.6; margin-bottom: 20px;">
-                            The requested URL or security node signature was not found on this server or has been restricted. That’s all we know.
+                            The requested origin, security token, or node signature is invalid, expired, or unauthorized. That’s all we know.
                         </p>
                     </div>
 
@@ -286,7 +283,6 @@
             `;
         }
 
-        // 🕵️ 偵測 F12 / DevTools 竄改與除錯行為
         function initAntiTamperProtection() {
             setInterval(() => {
                 if (isSystemLocked) return;
@@ -308,35 +304,6 @@
                     renderF001Error('F001_INSPECTOR');
                 }
             }, 2000);
-        }
-
-        function validateAdminSessionIntegrity() {
-            const rawCache = sessionStorage.getItem('tssc_admin_auth');
-            if (!rawCache) return null;
-
-            try {
-                const sessionNode = JSON.parse(rawCache);
-                if (!sessionNode.email || !sessionNode.token || !sessionNode.timestamp) {
-                    _syncTelemetry('ERR_SCHEMA', { raw: rawCache });
-                    return null;
-                }
-
-                const decodedPayload = parseJwt(sessionNode.token);
-                if (!decodedPayload || !decodedPayload.email) {
-                    _syncTelemetry('ERR_TOKEN_PARSE');
-                    return null;
-                }
-
-                if (decodedPayload.email.toLowerCase() !== sessionNode.email.toLowerCase()) {
-                    _syncTelemetry('ERR_MISMATCH', { cached: sessionNode.email, verified: decodedPayload.email });
-                    return null;
-                }
-
-                return sessionNode;
-            } catch (err) {
-                _syncTelemetry('ERR_EXCEPTION', { exception: err.message });
-                return null;
-            }
         }
 
         function redirectToGoogleLogin() {
@@ -392,18 +359,16 @@
                 return;
             }
 
-            const authData = validateAdminSessionIntegrity();
-            if (!authData) return;
+            const rawCache = sessionStorage.getItem('tssc_admin_auth');
+            if (!rawCache) return;
 
             try {
-                const now = Date.now();
-                if (now - authData.timestamp > 30 * 60 * 1000) {
+                const sessionNode = JSON.parse(rawCache);
+                if (!sessionNode.email || !sessionNode.token) {
                     logoutAdmin();
                     return;
                 }
-                authData.timestamp = now;
-                sessionStorage.setItem('tssc_admin_auth', JSON.stringify(authData));
-                showAdminMain(authData.email);
+                showAdminMain(sessionNode.email);
             } catch (e) {
                 logoutAdmin();
             }
