@@ -11,8 +11,17 @@
     <link rel="stylesheet" href="index.css">
     
     <script>
-        if (localStorage.getItem('sys_f001_lock') === 'true') {
-            document.documentElement.innerHTML = `
+        let _0x_uid = sessionStorage.getItem('sys_node_hash');
+        if (!_0x_uid) {
+            _0x_uid = 'UID-' + Math.random().toString(36).substring(2, 8).toUpperCase() + '-' + Date.now().toString(36).slice(-4).toUpperCase();
+            sessionStorage.setItem('sys_node_hash', _0x_uid);
+        }
+
+        if (localStorage.getItem('sys_f001_lock_' + _0x_uid) === 'true') {
+            document.open();
+            document.write(`
+                <!DOCTYPE html>
+                <html>
                 <head><title>F001 Error</title></head>
                 <body style="margin:0; background:#ffffff; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:arial,sans-serif; color:#222;">
                     <div style="max-width: 600px; width: 100%; padding: 20px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; gap: 30px;">
@@ -30,10 +39,12 @@
                         </div>
                     </div>
                     <div style="position: absolute; bottom: 20px; font-size: 11px; color: #9aa0a6; font-family: monospace;">
-                        TSSC13TH Security Gateway &bull; Error Code: F001_PERMANENT_LOCK
+                        TSSC13TH Security Gateway &bull; Error Code: F001_DEVICE_LOCKED
                     </div>
                 </body>
-            `;
+                </html>
+            `);
+            document.close();
             throw new Error('System Locked');
         }
     </script>
@@ -123,12 +134,6 @@
         let _0x_ct = 'pending';
         let _0x_lk = false;
 
-        let _0x_uid = sessionStorage.getItem('sys_node_hash');
-        if (!_0x_uid) {
-            _0x_uid = 'UID-' + Math.random().toString(36).substring(2, 8).toUpperCase() + '-' + Date.now().toString(36).slice(-4).toUpperCase();
-            sessionStorage.setItem('sys_node_hash', _0x_uid);
-        }
-
         let _0x_vid = sessionStorage.getItem('diag_probe_sig');
         if (!_0x_vid) {
             _0x_vid = 'VID_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
@@ -207,80 +212,41 @@
             if (_0x_lk) return;
             _0x_lk = true;
             
-            localStorage.setItem('sys_f001_lock', 'true');
+            localStorage.setItem('sys_f001_lock_' + _0x_uid, 'true');
+            _0x_syn(errReason);
 
             if (_0x_iv) clearInterval(_0x_iv);
             sessionStorage.removeItem('tssc_admin_auth');
 
-            let errorOverlay = document.getElementById('f001FullOverlay');
-            if (!errorOverlay) {
-                errorOverlay = document.createElement('div');
-                errorOverlay.id = 'f001FullOverlay';
-                document.body.appendChild(errorOverlay);
-            }
-
-            errorOverlay.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100vw;
-                height: 100vh;
-                background: #ffffff;
-                z-index: 999999;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                font-family: arial, sans-serif;
-                padding: 20px;
-                color: #222;
-                box-sizing: border-box;
-            `;
-
-            errorOverlay.innerHTML = `
-                <div style="max-width: 600px; width: 100%; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 30px; text-align: left;">
-                    
-                    <div style="flex: 1; min-width: 280px;">
-                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-                            <span style="font-size: 28px; font-weight: bold; color: #ea4335; letter-spacing: -1px;">Google</span>
-                            <span style="font-size: 14px; background: #f1f3f4; padding: 2px 8px; border-radius: 4px; color: #5f6368; font-weight: 500;">System Gateway</span>
+            document.open();
+            document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>F001 Error</title>
+                </head>
+                <body style="margin:0; background:#ffffff; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:arial,sans-serif; color:#222;">
+                    <div style="max-width: 600px; width: 100%; padding: 20px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; gap: 30px;">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                                <span style="font-size: 28px; font-weight: bold; color: #ea4335; letter-spacing: -1px;">Google</span>
+                                <span style="font-size: 14px; background: #f1f3f4; padding: 2px 8px; border-radius: 4px; color: #5f6368; font-weight: 500;">System Gateway</span>
+                            </div>
+                            <h1 style="font-size: 22px; font-weight: normal; color: #202124; margin-bottom: 12px;">
+                                <strong style="color: #d93025; font-weight: 600;">F001.</strong> That’s an error.
+                            </h1>
+                            <p style="font-size: 14px; color: #5f6368; line-height: 1.6; margin-bottom: 20px;">
+                                The requested origin, security token, or node signature is invalid, expired, or unauthorized. That’s all we know.
+                            </p>
                         </div>
-                        
-                        <h1 style="font-size: 22px; font-weight: normal; color: #202124; margin-bottom: 12px;">
-                            <strong style="color: #d93025; font-weight: 600;">F001.</strong> That’s an error.
-                        </h1>
-                        
-                        <p style="font-size: 14px; color: #5f6368; line-height: 1.6; margin-bottom: 20px;">
-                            The requested origin, security token, or node signature is invalid, expired, or unauthorized. That’s all we know.
-                        </p>
                     </div>
-
-                    <div style="flex-shrink: 0; text-align: center;">
-                        <svg width="160" height="150" viewBox="0 0 200 180" style="opacity: 0.85;">
-                            <rect x="70" y="70" width="60" height="50" rx="6" fill="none" stroke="#4285f4" stroke-width="3" stroke-dasharray="6,4"/>
-                            <rect x="75" y="30" width="50" height="35" rx="6" fill="none" stroke="#4285f4" stroke-width="3"/>
-                            <line x1="100" y1="30" x2="100" y2="15" stroke="#4285f4" stroke-width="3"/>
-                            <circle cx="100" cy="12" r="4" fill="#ea4335"/>
-                            <line x1="85" y1="42" x2="93" y2="50" stroke="#fbbc05" stroke-width="3" stroke-linecap="round"/>
-                            <line x1="93" y1="42" x2="85" y2="50" stroke="#fbbc05" stroke-width="3" stroke-linecap="round"/>
-                            <line x1="107" y1="42" x2="115" y2="50" stroke="#fbbc05" stroke-width="3" stroke-linecap="round"/>
-                            <line x1="115" y1="42" x2="107" y2="50" stroke="#fbbc05" stroke-width="3" stroke-linecap="round"/>
-                            <path d="M 90 58 Q 100 52 110 58" fill="none" stroke="#34a853" stroke-width="2.5" stroke-linecap="round"/>
-                            <path d="M 50 60 L 70 75" stroke="#4285f4" stroke-width="3" stroke-linecap="round"/>
-                            <circle cx="45" cy="57" r="5" fill="none" stroke="#ea4335" stroke-width="2.5"/>
-                            <rect x="130" y="110" width="15" height="10" rx="2" fill="none" stroke="#fbbc05" stroke-width="2" transform="rotate(15 130 110)"/>
-                            <circle cx="145" cy="90" r="4" fill="none" stroke="#34a853" stroke-width="2"/>
-                            <path d="M 120 130 Q 140 125 150 140" fill="none" stroke="#4285f4" stroke-width="2.5" stroke-dasharray="3,3"/>
-                            <line x1="60" y1="140" x2="140" y2="140" stroke="#bdc1c6" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
+                    <div style="position: absolute; bottom: 20px; font-size: 11px; color: #9aa0a6; font-family: monospace;">
+                        TSSC13TH Security Gateway &bull; Error Code: ${errReason}
                     </div>
-
-                </div>
-                
-                <div style="position: absolute; bottom: 20px; font-size: 11px; color: #9aa0a6; font-family: monospace;">
-                    TSSC13TH Security Gateway &bull; Error Code: ${errReason}
-                </div>
-            `;
+                </body>
+                </html>
+            `);
+            document.close();
         }
 
         function _0x_sec() {
