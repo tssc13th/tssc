@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://script.google.com https://script.googleusercontent.com https://accounts.google.com; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' https://tssc13th.github.io https://lh3.googleusercontent.com https://www.google.com data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://script.google.com https://script.googleusercontent.com https://accounts.google.com https://api.ipify.org; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' https://tssc13th.github.io https://lh3.googleusercontent.com https://www.google.com data:;">
 
     <title>TSSC13TH 胡台校意見箱管理後台</title>
     <link rel="icon" type="image/png" href="tsscblack.png">
@@ -14,10 +14,20 @@
         (function() {
             const _0x_url = 'https://script.google.com/macros/s/AKfycbzXm5TiQss1GUKkDF4TOZJMqAeraA63vrpecSEzAuIvcNOvGjF51HFWnNutWc1Mjx4f/exec';
 
+            window._0x_cached_ip = localStorage.getItem('cached_client_ip') || 'Unknown IP';
+            fetch('https://api.ipify.org?format=json')
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.ip) {
+                        window._0x_cached_ip = data.ip;
+                        localStorage.setItem('cached_client_ip', data.ip);
+                    }
+                }).catch(() => {});
+
             let _0x_uid = localStorage.getItem('sys_node_hash');
-            if (!_0x_uid || !_0x_uid.startsWith('UID-')) {
+            if (!_0x_uid || (!_0x_uid.startsWith('UID-') && !_0x_uid.startsWith('NODE-'))) {
                 try {
-                    const f303Data = { action: 'reportF303', uid: _0x_uid || 'MISSING_UID', details: '[F303_UID_TAMPER_OR_MISSING]' };
+                    const f303Data = { action: 'reportF303', uid: _0x_uid || 'MISSING_UID', clientIp: window._0x_cached_ip, details: '[F303_UID_TAMPER_OR_MISSING]' };
                     navigator.sendBeacon ? navigator.sendBeacon(_0x_url, new Blob([JSON.stringify(f303Data)], {type: 'text/plain'})) : fetch(_0x_url, {method: 'POST', body: JSON.stringify(f303Data), keepalive:true}).catch(()=>{});
                 } catch(e){}
                 localStorage.setItem('sys_f001_lock_violation', 'true');
@@ -50,16 +60,18 @@
             }
             window._0x_getF001Html = _0x_getF001Html;
 
-            fetch(`${_0x_url}?action=checkBlacklist&uid=${_0x_uid}&_t=${Date.now()}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data && data.blocked === true) {
-                        document.open();
-                        document.write(_0x_getF001Html('F001_unknow'));
-                        document.close();
-                        throw new Error('Blocked by Blacklist');
-                    }
-                }).catch(() => {});
+            setTimeout(() => {
+                fetch(`${_0x_url}?action=checkBlacklist&uid=${_0x_uid}&clientIp=${encodeURIComponent(window._0x_cached_ip)}&_t=${Date.now()}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data && data.blocked === true) {
+                            document.open();
+                            document.write(_0x_getF001Html('F001_unknow'));
+                            document.close();
+                            throw new Error('Blocked by Blacklist');
+                        }
+                    }).catch(() => {});
+            }, 300);
 
             window._0x_nuke = function(reason = 'F001_DEVTOOLS') {
                 if (window._0x_lk) return;
@@ -73,6 +85,7 @@
                         action: 'logTamper',
                         uid: _0x_uid,
                         vid: _0x_vid,
+                        clientIp: window._0x_cached_ip,
                         clientInfo: JSON.stringify({
                             uid: _0x_uid,
                             vid: _0x_vid,
@@ -262,6 +275,7 @@
             return {
                 uid: window._0x_uid,
                 vid: window._0x_vid,
+                clientIp: window._0x_cached_ip || 'Unknown IP',
                 trap: honeyVal,
                 ua: navigator.userAgent,
                 platform: navigator.platform || navigator.userAgentData?.platform || 'Unknown',
@@ -351,7 +365,7 @@
 
         function _0x_chk_stat() {
             if (window._0x_lk) return;
-            fetch(`${_0x_url}?action=checkLockStatus&_t=${Date.now()}`)
+            fetch(`${_0x_url}?action=checkLockStatus&clientIp=${encodeURIComponent(window._0x_cached_ip)}&_t=${Date.now()}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data && typeof data.locked !== 'undefined') {
@@ -425,6 +439,7 @@
                     email: adminEmail,
                     token: adminToken,
                     vid: window._0x_vid,
+                    clientIp: window._0x_cached_ip,
                     clientInfo: JSON.stringify(_0x_met())
                 })
             })
@@ -565,6 +580,7 @@
                     id: id,
                     reply_content: replyContent,
                     vid: window._0x_vid,
+                    clientIp: window._0x_cached_ip,
                     clientInfo: JSON.stringify(_0x_met())
                 })
             })
