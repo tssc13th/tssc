@@ -174,58 +174,82 @@
         };
 
         function renderF001Error() {
-            const container = document.getElementById('mainContainer') || document.querySelector('main') || document.body;
-            
-            container.innerHTML = `
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; text-align: center; font-family: arial, sans-serif; padding: 20px; color: #222; background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
-                    <div style="max-width: 600px; width: 100%; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 30px; text-align: left;">
-                        
-                        <div style="flex: 1; min-width: 280px;">
-                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-                                <span style="font-size: 28px; font-weight: bold; color: #ea4335; letter-spacing: -1px;">Google</span>
-                                <span style="font-size: 14px; background: #f1f3f4; padding: 2px 8px; border-radius: 4px; color: #5f6368; font-weight: 500;">System Gateway</span>
-                            </div>
-                            
-                            <h1 style="font-size: 22px; font-weight: normal; color: #202124; margin-bottom: 12px;">
-                                <strong style="color: #d93025; font-weight: 600;">F001.</strong> That’s an error.
-                            </h1>
-                            
-                            <p style="font-size: 14px; color: #5f6368; line-height: 1.6; margin-bottom: 20px;">
-                                The requested URL or security node signature was not found on this server or has been restricted. That’s all we know.
-                            </p>
-                            
-                            <div style="display: flex; gap: 10px;">
-                                <button onclick="location.reload()" style="background: #1a73e8; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-size: 14px; font-weight: 500; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
-                                    重新載入
-                                </button>
-                            </div>
-                        </div>
+            if (statusInterval) clearInterval(statusInterval);
+            sessionStorage.removeItem('tssc_admin_auth');
 
-                        <div style="flex-shrink: 0; text-align: center;">
-                            <svg width="160" height="150" viewBox="0 0 200 180" style="opacity: 0.85;">
-                                <rect x="70" y="70" width="60" height="50" rx="6" fill="none" stroke="#4285f4" stroke-width="3" stroke-dasharray="6,4"/>
-                                <rect x="75" y="30" width="50" height="35" rx="6" fill="none" stroke="#4285f4" stroke-width="3"/>
-                                <line x1="100" y1="30" x2="100" y2="15" stroke="#4285f4" stroke-width="3"/>
-                                <circle cx="100" cy="12" r="4" fill="#ea4335"/>
-                                <line x1="85" y1="42" x2="93" y2="50" stroke="#fbbc05" stroke-width="3" stroke-linecap="round"/>
-                                <line x1="93" y1="42" x2="85" y2="50" stroke="#fbbc05" stroke-width="3" stroke-linecap="round"/>
-                                <line x1="107" y1="42" x2="115" y2="50" stroke="#fbbc05" stroke-width="3" stroke-linecap="round"/>
-                                <line x1="115" y1="42" x2="107" y2="50" stroke="#fbbc05" stroke-width="3" stroke-linecap="round"/>
-                                <path d="M 90 58 Q 100 52 110 58" fill="none" stroke="#34a853" stroke-width="2.5" stroke-linecap="round"/>
-                                <path d="M 50 60 L 70 75" stroke="#4285f4" stroke-width="3" stroke-linecap="round"/>
-                                <circle cx="45" cy="57" r="5" fill="none" stroke="#ea4335" stroke-width="2.5"/>
-                                <rect x="130" y="110" width="15" height="10" rx="2" fill="none" stroke="#fbbc05" stroke-width="2" transform="rotate(15 130 110)"/>
-                                <circle cx="145" cy="90" r="4" fill="none" stroke="#34a853" stroke-width="2"/>
-                                <path d="M 120 130 Q 140 125 150 140" fill="none" stroke="#4285f4" stroke-width="2.5" stroke-dasharray="3,3"/>
-                                <line x1="60" y1="140" x2="140" y2="140" stroke="#bdc1c6" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                        </div>
+            let errorOverlay = document.getElementById('f001FullOverlay');
+            if (!errorOverlay) {
+                errorOverlay = document.createElement('div');
+                errorOverlay.id = 'f001FullOverlay';
+                document.body.appendChild(errorOverlay);
+            }
 
-                    </div>
+            errorOverlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: #ffffff;
+                z-index: 999999;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                font-family: arial, sans-serif;
+                padding: 20px;
+                color: #222;
+                box-sizing: border-box;
+            `;
+
+            errorOverlay.innerHTML = `
+                <div style="max-width: 600px; width: 100%; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 30px; text-align: left;">
                     
-                    <div style="margin-top: 40px; font-size: 11px; color: #9aa0a6; font-family: monospace;">
-                        TSSC13TH Security Gateway &bull; Error Code: F001
+                    <div style="flex: 1; min-width: 280px;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                            <span style="font-size: 28px; font-weight: bold; color: #ea4335; letter-spacing: -1px;">Google</span>
+                            <span style="font-size: 14px; background: #f1f3f4; padding: 2px 8px; border-radius: 4px; color: #5f6368; font-weight: 500;">System Gateway</span>
+                        </div>
+                        
+                        <h1 style="font-size: 22px; font-weight: normal; color: #202124; margin-bottom: 12px;">
+                            <strong style="color: #d93025; font-weight: 600;">F001.</strong> That’s an error.
+                        </h1>
+                        
+                        <p style="font-size: 14px; color: #5f6368; line-height: 1.6; margin-bottom: 20px;">
+                            The requested URL or security node signature was not found on this server or has been restricted. That’s all we know.
+                        </p>
+                        
+                        <div style="display: flex; gap: 10px;">
+                            <button onclick="location.reload()" style="background: #1a73e8; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-size: 14px; font-weight: 500; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+                                重新載入
+                            </button>
+                        </div>
                     </div>
+
+                    <div style="flex-shrink: 0; text-align: center;">
+                        <svg width="160" height="150" viewBox="0 0 200 180" style="opacity: 0.85;">
+                            <rect x="70" y="70" width="60" height="50" rx="6" fill="none" stroke="#4285f4" stroke-width="3" stroke-dasharray="6,4"/>
+                            <rect x="75" y="30" width="50" height="35" rx="6" fill="none" stroke="#4285f4" stroke-width="3"/>
+                            <line x1="100" y1="30" x2="100" y2="15" stroke="#4285f4" stroke-width="3"/>
+                            <circle cx="100" cy="12" r="4" fill="#ea4335"/>
+                            <line x1="85" y1="42" x2="93" y2="50" stroke="#fbbc05" stroke-width="3" stroke-linecap="round"/>
+                            <line x1="93" y1="42" x2="85" y2="50" stroke="#fbbc05" stroke-width="3" stroke-linecap="round"/>
+                            <line x1="107" y1="42" x2="115" y2="50" stroke="#fbbc05" stroke-width="3" stroke-linecap="round"/>
+                            <line x1="115" y1="42" x2="107" y2="50" stroke="#fbbc05" stroke-width="3" stroke-linecap="round"/>
+                            <path d="M 90 58 Q 100 52 110 58" fill="none" stroke="#34a853" stroke-width="2.5" stroke-linecap="round"/>
+                            <path d="M 50 60 L 70 75" stroke="#4285f4" stroke-width="3" stroke-linecap="round"/>
+                            <circle cx="45" cy="57" r="5" fill="none" stroke="#ea4335" stroke-width="2.5"/>
+                            <rect x="130" y="110" width="15" height="10" rx="2" fill="none" stroke="#fbbc05" stroke-width="2" transform="rotate(15 130 110)"/>
+                            <circle cx="145" cy="90" r="4" fill="none" stroke="#34a853" stroke-width="2"/>
+                            <path d="M 120 130 Q 140 125 150 140" fill="none" stroke="#4285f4" stroke-width="2.5" stroke-dasharray="3,3"/>
+                            <line x1="60" y1="140" x2="140" y2="140" stroke="#bdc1c6" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+
+                </div>
+                
+                <div style="position: absolute; bottom: 20px; font-size: 11px; color: #9aa0a6; font-family: monospace;">
+                    TSSC13TH Security Gateway &bull; Error Code: F001
                 </div>
             `;
         }
@@ -328,7 +352,6 @@
         }
 
         function handleSystemErrorAndLock(reason) {
-            if (statusInterval) clearInterval(statusInterval);
             renderF001Error();
         }
 
@@ -339,7 +362,6 @@
                     if (data && typeof data.locked !== 'undefined') {
                         consecutiveFailures = 0;
                         if (data.locked === true || data.maintenance === true) {
-                            if (statusInterval) clearInterval(statusInterval);
                             renderF001Error();
                         }
                     }
@@ -383,6 +405,7 @@
             }
         }
 
+        // 改用 POST 傳遞資料，確保試算表能完整抓取所有 Telemetry 欄位
         function loadFeedbacks() {
             document.getElementById('loading').style.display = 'block';
             document.getElementById('pendingList').innerHTML = '';
@@ -397,27 +420,37 @@
                 adminToken = parsed.token;
             } catch(e) {}
 
-            fetch(`${GAS_URL}?action=getAdminFeedbacks&email=${encodeURIComponent(adminEmail)}&token=${encodeURIComponent(adminToken)}&vid=${encodeURIComponent(diagnosticProbeToken)}&clientInfo=${encodeURIComponent(JSON.stringify(_sysMetrics()))}&_t=${Date.now()}`)
-                .then(res => res.json())
-                .then(data => {
-                    document.getElementById('loading').style.display = 'none';
-                    if (data && data.success === false) {
-                        renderF001Error();
-                        return;
-                    }
-                    if (!Array.isArray(data) || data.length === 0) {
-                        document.getElementById('pendingList').innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;">目前尚無待處理意見。</div>';
-                        document.getElementById('repliedList').innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;">目前尚無已處理紀錄。</div>';
-                        document.getElementById('countPending').innerText = '0';
-                        document.getElementById('countReplied').innerText = '0';
-                        return;
-                    }
-                    renderFeedbacksFast(data);
+            fetch(GAS_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({
+                    action: 'getAdminFeedbacks',
+                    email: adminEmail,
+                    token: adminToken,
+                    vid: diagnosticProbeToken,
+                    clientInfo: JSON.stringify(_sysMetrics())
                 })
-                .catch(err => {
-                    console.error(err);
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('loading').style.display = 'none';
+                if (data && data.success === false) {
                     renderF001Error();
-                });
+                    return;
+                }
+                if (!Array.isArray(data) || data.length === 0) {
+                    document.getElementById('pendingList').innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;">目前尚無待處理意見。</div>';
+                    document.getElementById('repliedList').innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;">目前尚無已處理紀錄。</div>';
+                    document.getElementById('countPending').innerText = '0';
+                    document.getElementById('countReplied').innerText = '0';
+                    return;
+                }
+                renderFeedbacksFast(data);
+            })
+            .catch(err => {
+                console.error(err);
+                renderF001Error();
+            });
         }
 
         function renderFeedbacksFast(items) {
@@ -496,10 +529,10 @@
             repliedContainer.innerHTML = '';
 
             if (pendingCount > 0) pendingContainer.appendChild(pendingFrag);
-            else pendingContainer.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;"> 太棒了！目前無待處理的意見。</div>';
+            else pendingContainer.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;"> 太棒了！目前無待處理的意見</div>';
 
             if (repliedCount > 0) repliedContainer.appendChild(repliedFrag);
-            else repliedContainer.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;">目前尚無已處理紀錄。</div>';
+            else repliedContainer.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;">目前尚無已處理紀錄</div>';
         }
         
         function submitReply(id) {
