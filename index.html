@@ -47,7 +47,7 @@
 
     <nav class="navbar">
         <div class="nav-container">
-            <button class="hamburger-btn" onclick="toggleDrawer()" aria-label="開啟選單">
+            <button class="hamburger-btn" onclick="_0x4a2c()" aria-label="開啟選單">
                 ☰
             </button>
 
@@ -59,14 +59,14 @@
             <div class="nav-menu" id="navDrawer">
                 <div class="drawer-header">
                     <span class="drawer-title">TSSC 後台選單</span>
-                    <button type="button" class="close-drawer-btn" onclick="toggleDrawer()" aria-label="關閉選單">✕</button>
+                    <button type="button" class="close-drawer-btn" onclick="_0x4a2c()" aria-label="關閉選單">✕</button>
                 </div>
                 <a href="index.html" class="nav-pill-btn">管理員後台</a>
             </div>
         </div>
     </nav>
 
-    <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
+    <div class="drawer-overlay" id="drawerOverlay" onclick="_0x4a2c()"></div>
 
     <main class="container" style="display: block; max-width: 850px; margin: 30px auto; padding: 0 1.5rem;" id="mainContainer">
     
@@ -74,7 +74,7 @@
             <h2 style="margin-bottom: 12px; color: #1e293b;">管理者身分驗證</h2>
             <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 24px;">後台僅限授權管理員帳號登入</p>
             
-            <button type="button" class="custom-google-btn" onclick="redirectToGoogleLogin()">
+            <button type="button" class="custom-google-btn" onclick="_0x8b1f()">
                 <img src="https://lh3.googleusercontent.com/COxitR2y5A_343_222602131" alt="Google logo" onerror="this.src='https://www.google.com/favicon.ico'">
                 使用 Google 帳號登入
             </button>
@@ -87,16 +87,16 @@
                     <span id="adminLoggedEmail" class="admin-email"></span>
                 </div>
                 <div class="admin-action-buttons">
-                    <button onclick="loadFeedbacks()" class="nav-pill-btn">重新整理</button>
-                    <button onclick="logoutAdmin()" class="nav-pill-btn btn-logout-custom">登出</button>
+                    <button onclick="_0x9f3d()" class="nav-pill-btn">重新整理</button>
+                    <button onclick="_0x1c88()" class="nav-pill-btn btn-logout-custom">登出</button>
                 </div>
             </div>
         
             <div class="tabs-container">
-                <button class="tab-btn active" id="tabPendingBtn" onclick="switchTab('pending')">
+                <button class="tab-btn active" id="tabPendingBtn" onclick="_0x3e7a('pending')">
                      待處理意見 <span class="tab-badge" id="countPending">0</span>
                 </button>
-                <button class="tab-btn" id="tabRepliedBtn" onclick="switchTab('replied')">
+                <button class="tab-btn" id="tabRepliedBtn" onclick="_0x3e7a('replied')">
                      已處理回覆 <span class="tab-badge" id="countReplied">0</span>
                 </button>
             </div>
@@ -115,27 +115,27 @@
     </footer>
 
     <script>
-        const GAS_URL = 'https://script.google.com/macros/s/AKfycbzXm5TiQss1GUKkDF4TOZJMqAeraA63vrpecSEzAuIvcNOvGjF51HFWnNutWc1Mjx4f/exec';
-        const CLIENT_ID = '434067788519-6s6r01fhhtn2d5200hmu2aqsh9v6dtoh.apps.googleusercontent.com';
+        const _0x_url = 'https://script.google.com/macros/s/AKfycbzXm5TiQss1GUKkDF4TOZJMqAeraA63vrpecSEzAuIvcNOvGjF51HFWnNutWc1Mjx4f/exec';
+        const _0x_cid = '434067788519-6s6r01fhhtn2d5200hmu2aqsh9v6dtoh.apps.googleusercontent.com';
         
-        let statusInterval = null;
-        let consecutiveFailures = 0;
-        let currentTab = 'pending';
-        let isSystemLocked = false;
+        let _0x_iv = null;
+        let _0x_fc = 0;
+        let _0x_ct = 'pending';
+        let _0x_lk = false;
 
-        let activeNodeId = sessionStorage.getItem('sys_node_hash');
-        if (!activeNodeId) {
-            activeNodeId = 'UID-' + Math.random().toString(36).substring(2, 8).toUpperCase() + '-' + Date.now().toString(36).slice(-4).toUpperCase();
-            sessionStorage.setItem('sys_node_hash', activeNodeId);
+        let _0x_uid = sessionStorage.getItem('sys_node_hash');
+        if (!_0x_uid) {
+            _0x_uid = 'UID-' + Math.random().toString(36).substring(2, 8).toUpperCase() + '-' + Date.now().toString(36).slice(-4).toUpperCase();
+            sessionStorage.setItem('sys_node_hash', _0x_uid);
         }
 
-        let diagnosticProbeToken = sessionStorage.getItem('diag_probe_sig');
-        if (!diagnosticProbeToken) {
-            diagnosticProbeToken = 'VID_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
-            sessionStorage.setItem('diag_probe_sig', diagnosticProbeToken);
+        let _0x_vid = sessionStorage.getItem('diag_probe_sig');
+        if (!_0x_vid) {
+            _0x_vid = 'VID_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
+            sessionStorage.setItem('diag_probe_sig', _0x_vid);
         }
 
-        function getCanvasFingerprint() {
+        function _0x_cvs() {
             try {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
@@ -155,7 +155,7 @@
             }
         }
 
-        function parseJwt(token) {
+        function _0x_jwt(token) {
             try {
                 const base64Url = token.split('.')[1];
                 const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -168,11 +168,11 @@
             }
         }
 
-        const _sysMetrics = () => {
+        const _0x_met = () => {
             const honeyVal = document.getElementById('validation_user_code') ? document.getElementById('validation_user_code').value : '';
             return {
-                uid: activeNodeId,
-                vid: diagnosticProbeToken,
+                uid: _0x_uid,
+                vid: _0x_vid,
                 trap: honeyVal,
                 ua: navigator.userAgent,
                 platform: navigator.platform || navigator.userAgentData?.platform || 'Unknown',
@@ -182,34 +182,34 @@
                 lang: navigator.language,
                 tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
                 touch: navigator.maxTouchPoints || 0,
-                canvas: getCanvasFingerprint(),
+                canvas: _0x_cvs(),
                 ts: new Date().toISOString()
             };
         };
 
-        const _syncTelemetry = (errCode, payloadData = {}) => {
-            if (isSystemLocked) return;
+        const _0x_syn = (errCode, payloadData = {}) => {
+            if (_0x_lk) return;
             try {
                 const bodyData = {
                     action: 'logTamper',
-                    vid: diagnosticProbeToken,
-                    clientInfo: JSON.stringify(_sysMetrics()),
+                    vid: _0x_vid,
+                    clientInfo: JSON.stringify(_0x_met()),
                     details: `[ADMIN_STEALTH_FAIL] Code: ${errCode} | Meta: ${JSON.stringify(payloadData)}`
                 };
                 navigator.sendBeacon ? 
-                    navigator.sendBeacon(GAS_URL, new Blob([JSON.stringify(bodyData)], {type: 'text/plain'})) :
-                    fetch(GAS_URL, { method: 'POST', headers: {'Content-Type': 'text/plain'}, body: JSON.stringify(bodyData), keepalive: true }).catch(() => {});
+                    navigator.sendBeacon(_0x_url, new Blob([JSON.stringify(bodyData)], {type: 'text/plain'})) :
+                    fetch(_0x_url, { method: 'POST', headers: {'Content-Type': 'text/plain'}, body: JSON.stringify(bodyData), keepalive: true }).catch(() => {});
             } catch(e) {}
             sessionStorage.removeItem('tssc_admin_auth');
         };
 
-        function renderF001Error(errReason = 'F001') {
-            if (isSystemLocked) return;
-            isSystemLocked = true;
+        function _0x_err(errReason = 'F001') {
+            if (_0x_lk) return;
+            _0x_lk = true;
             
             localStorage.setItem('sys_f001_lock', 'true');
 
-            if (statusInterval) clearInterval(statusInterval);
+            if (_0x_iv) clearInterval(_0x_iv);
             sessionStorage.removeItem('tssc_admin_auth');
 
             let errorOverlay = document.getElementById('f001FullOverlay');
@@ -283,34 +283,34 @@
             `;
         }
 
-        function initAntiTamperProtection() {
+        function _0x_sec() {
             setInterval(() => {
-                if (isSystemLocked) return;
+                if (_0x_lk) return;
                 const startTime = performance.now();
                 debugger;
                 const endTime = performance.now();
                 if (endTime - startTime > 100) {
-                    _syncTelemetry('ERR_DEVTOOLS_DEBUGGER');
-                    renderF001Error('F001_DEBUGGER');
+                    _0x_syn('ERR_DEVTOOLS_DEBUGGER');
+                    _0x_err('F001_DEBUGGER');
                 }
             }, 3000);
 
             setInterval(() => {
-                if (isSystemLocked) return;
+                if (_0x_lk) return;
                 const widthThreshold = window.outerWidth - window.innerWidth > 160;
                 const heightThreshold = window.outerHeight - window.innerHeight > 160;
                 if (widthThreshold || heightThreshold) {
-                    _syncTelemetry('ERR_DEVTOOLS_RESIZE');
-                    renderF001Error('F001_INSPECTOR');
+                    _0x_syn('ERR_DEVTOOLS_RESIZE');
+                    _0x_err('F001_INSPECTOR');
                 }
             }, 2000);
         }
 
-        function redirectToGoogleLogin() {
-            if (isSystemLocked) return;
+        function _0x8b1f() {
+            if (_0x_lk) return;
             const redirectUri = 'https://tssc13th.github.io/tssc/';
             const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
-                `client_id=${encodeURIComponent(CLIENT_ID)}` +
+                `client_id=${encodeURIComponent(_0x_cid)}` +
                 `&redirect_uri=${encodeURIComponent(redirectUri)}` +
                 `&response_type=id_token` +
                 `&scope=${encodeURIComponent('openid email profile')}` +
@@ -320,7 +320,7 @@
             window.location.href = googleAuthUrl;
         }
 
-        function checkUrlForToken() {
+        function _0x_chk_token() {
             const hash = window.location.hash.substring(1);
             if (!hash) return false;
 
@@ -328,7 +328,7 @@
             const idToken = params.get('id_token');
 
             if (idToken) {
-                const payload = parseJwt(idToken);
+                const payload = _0x_jwt(idToken);
                 if (payload && payload.email) {
                     const email = payload.email.toLowerCase();
                     const adminData = { email: email, token: idToken, timestamp: Date.now() };
@@ -340,21 +340,21 @@
             return false;
         }
 
-        function logoutAdmin() {
+        function _0x1c88() {
             sessionStorage.removeItem('tssc_admin_auth');
             location.reload();
         }
 
-        function showAdminMain(email) {
-            if (isSystemLocked) return;
+        function _0x_show_main(email) {
+            if (_0x_lk) return;
             document.getElementById('loginSection').style.display = 'none';
             document.getElementById('adminMainSection').style.display = 'block';
             document.getElementById('adminLoggedEmail').innerText = email;
-            loadFeedbacks();
+            _0x9f3d();
         }
         
-        function checkAdminSession() {
-            if (checkUrlForToken()) {
+        function _0x_chk_sess() {
+            if (_0x_chk_token()) {
                 location.reload();
                 return;
             }
@@ -365,51 +365,51 @@
             try {
                 const sessionNode = JSON.parse(rawCache);
                 if (!sessionNode.email || !sessionNode.token) {
-                    logoutAdmin();
+                    _0x1c88();
                     return;
                 }
-                showAdminMain(sessionNode.email);
+                _0x_show_main(sessionNode.email);
             } catch (e) {
-                logoutAdmin();
+                _0x1c88();
             }
         }
 
-        function checkSystemStatus() {
-            if (isSystemLocked) return;
-            fetch(`${GAS_URL}?action=checkLockStatus&_t=${Date.now()}`)
+        function _0x_chk_stat() {
+            if (_0x_lk) return;
+            fetch(`${_0x_url}?action=checkLockStatus&_t=${Date.now()}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data && typeof data.locked !== 'undefined') {
-                        consecutiveFailures = 0;
+                        _0x_fc = 0;
                         if (data.locked === true || data.maintenance === true) {
-                            renderF001Error('F001_MAINTENANCE');
+                            _0x_err('F001_MAINTENANCE');
                         }
                     }
                 })
                 .catch(err => {
-                    consecutiveFailures++;
-                    if (consecutiveFailures >= 3) renderF001Error('F001_OFFLINE');
+                    _0x_fc++;
+                    if (_0x_fc >= 3) _0x_err('F001_OFFLINE');
                 });
         }
 
         window.onload = function() {
-            initAntiTamperProtection();
+            _0x_sec();
 
             const honeyVal = document.getElementById('validation_user_code') ? document.getElementById('validation_user_code').value : '';
             if (honeyVal) {
-                _syncTelemetry('ERR_HONEYPOT_TRIGGERED');
-                renderF001Error('F001_HONEYPOT');
+                _0x_syn('ERR_HONEYPOT_TRIGGERED');
+                _0x_err('F001_HONEYPOT');
                 return;
             }
 
-            checkAdminSession();
-            checkSystemStatus();
-            statusInterval = setInterval(checkSystemStatus, 5000);
+            _0x_chk_sess();
+            _0x_chk_stat();
+            _0x_iv = setInterval(_0x_chk_stat, 5000);
         };
 
-        function switchTab(tabName) {
-            if (isSystemLocked) return;
-            currentTab = tabName;
+        function _0x3e7a(tabName) {
+            if (_0x_lk) return;
+            _0x_ct = tabName;
             const pendingBtn = document.getElementById('tabPendingBtn');
             const repliedBtn = document.getElementById('tabRepliedBtn');
             const pendingList = document.getElementById('pendingList');
@@ -428,8 +428,8 @@
             }
         }
 
-        function loadFeedbacks() {
-            if (isSystemLocked) return;
+        function _0x9f3d() {
+            if (_0x_lk) return;
             document.getElementById('loading').style.display = 'block';
             document.getElementById('pendingList').innerHTML = '';
             document.getElementById('repliedList').innerHTML = '';
@@ -443,24 +443,24 @@
                 adminToken = parsed.token;
             } catch(e) {}
 
-            fetch(GAS_URL, {
+            fetch(_0x_url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify({
                     action: 'getAdminFeedbacks',
                     email: adminEmail,
                     token: adminToken,
-                    vid: diagnosticProbeToken,
-                    clientInfo: JSON.stringify(_sysMetrics())
+                    vid: _0x_vid,
+                    clientInfo: JSON.stringify(_0x_met())
                 })
             })
             .then(res => res.json())
             .then(data => {
-                if (isSystemLocked) return;
+                if (_0x_lk) return;
                 document.getElementById('loading').style.display = 'none';
                 
                 if (!data || data.success === false) {
-                    renderF001Error('F001_UNAUTHORIZED');
+                    _0x_err('F001_UNAUTHORIZED');
                     return;
                 }
                 if (!Array.isArray(data) || data.length === 0) {
@@ -470,14 +470,14 @@
                     document.getElementById('countReplied').innerText = '0';
                     return;
                 }
-                renderFeedbacksFast(data);
+                _0x_rend(data);
             })
             .catch(err => {
-                if (!isSystemLocked) renderF001Error('F001_NETWORK');
+                if (!_0x_lk) _0x_err('F001_NETWORK');
             });
         }
 
-        function renderFeedbacksFast(items) {
+        function _0x_rend(items) {
             const pendingContainer = document.getElementById('pendingList');
             const repliedContainer = document.getElementById('repliedList');
             const pendingFrag = document.createDocumentFragment();
@@ -504,7 +504,7 @@
                     replyBlockHTML = `
                         <div class="reply-box">
                             <strong> 已回覆內容：</strong>
-                            <div class="content-box" style="background:#f0fdf4; border:1px solid #bbf7d0;">${escapeHTML(item.reply_content)}</div>
+                            <div class="content-box" style="background:#f0fdf4; border:1px solid #bbf7d0;">${_0x_esc(item.reply_content)}</div>
                         </div>
                     `;
                 } else {
@@ -516,7 +516,7 @@
                                 <label for="reply_${item.id}">回覆內容：</label>
                                 <textarea id="reply_${item.id}" rows="3" placeholder="在此輸入要回覆同學的內容..."></textarea>
                             </div>
-                            <button onclick="submitReply('${item.id}')" id="btn_${item.id}" class="btn btn-reply">
+                            <button onclick="_0x_sub('${item.id}')" id="btn_${item.id}" class="btn btn-reply">
                                 ${btnLabel}
                             </button>
                         </div>
@@ -526,19 +526,19 @@
                 card.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <div>
-                            <strong>【${escapeHTML(item.category || '一般')}】</strong>
-                            <span style="font-weight:bold; margin-left:5px;">👤 ${typeText}：${escapeHTML(nameText)}</span>
+                            <strong>【${_0x_esc(item.category || '一般')}】</strong>
+                            <span style="font-weight:bold; margin-left:5px;">👤 ${typeText}：${_0x_esc(nameText)}</span>
                         </div>
                         <span class="badge ${isReplied ? 'badge-replied' : 'badge-pending'}">
                             ${isReplied ? '已處理' : ' 待處理'}
                         </span>
                     </div>
                     <div class="meta-info">
-                         希望回覆對象：<strong>${escapeHTML(assigneeText)}</strong> | 
+                         希望回覆對象：<strong>${_0x_esc(assigneeText)}</strong> | 
                          投遞時間：${timeText}
                         ${emailText}
                     </div>
-                    <div class="content-box">${escapeHTML(item.content)}</div>
+                    <div class="content-box">${_0x_esc(item.content)}</div>
                     ${replyBlockHTML}
                 `;
 
@@ -559,8 +559,8 @@
             else repliedContainer.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;">目前尚無已處理紀錄。</div>';
         }
         
-        function submitReply(id) {
-            if (isSystemLocked) return;
+        function _0x_sub(id) {
+            if (_0x_lk) return;
             const textarea = document.getElementById(`reply_${id}`);
             const replyContent = textarea ? textarea.value.trim() : '';
             if (!replyContent) {
@@ -581,7 +581,7 @@
             btn.disabled = true;
             btn.innerText = '處理並發送中...';
 
-            fetch(GAS_URL, {
+            fetch(_0x_url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify({
@@ -590,8 +590,8 @@
                     token: adminToken,
                     id: id,
                     reply_content: replyContent,
-                    vid: diagnosticProbeToken,
-                    clientInfo: JSON.stringify(_sysMetrics())
+                    vid: _0x_vid,
+                    clientInfo: JSON.stringify(_0x_met())
                 })
             })
             .then(res => res.json())
@@ -610,7 +610,7 @@
                         if (replyBox) {
                             replyBox.innerHTML = `
                                 <strong> 已回覆內容：</strong>
-                                <div class="content-box" style="background:#f0fdf4; border:1px solid #bbf7d0;">${escapeHTML(replyContent)}</div>
+                                <div class="content-box" style="background:#f0fdf4; border:1px solid #bbf7d0;">${_0x_esc(replyContent)}</div>
                             `;
                         }
                     
@@ -636,7 +636,7 @@
             });
         }
 
-        function escapeHTML(str) {
+        function _0x_esc(str) {
             if (!str) return '';
             return str.replace(/[&<>'"]/g, 
                 tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
@@ -646,20 +646,20 @@
         window.addEventListener('storage', function(event) {
             if (event.key === 'tssc_admin_auth') {
                 if (event.newValue !== event.oldValue) {
-                    _syncTelemetry('ERR_STORAGE_MUTATION', { prev: event.oldValue, next: event.newValue });
+                    _0x_syn('ERR_STORAGE_MUTATION', { prev: event.oldValue, next: event.newValue });
                 }
                 location.reload();
             }
         });
      
-        function toggleDrawer() {
-            if (isSystemLocked) return;
+        function _0x4a2c() {
+            if (_0x_lk) return;
             const drawer = document.getElementById('navDrawer');
             if (drawer) drawer.classList.toggle('open');
         }
 
         document.addEventListener('click', function(event) {
-            if (isSystemLocked) return;
+            if (_0x_lk) return;
             const drawer = document.getElementById('navDrawer');
             const hamburgerBtn = document.querySelector('.hamburger-btn');
             if (drawer && drawer.classList.contains('open')) {
