@@ -64,7 +64,6 @@
             }
 
             const _0x_uid = _0x_genHardwareUid();
-            localStorage.setItem('sys_node_hash', _0x_uid);
             window._0x_uid = _0x_uid;
 
             let _0x_vid = sessionStorage.getItem('diag_probe_sig');
@@ -82,16 +81,16 @@
             }
             window._0x_getF001Html = _0x_getF001Html;
 
-            window._0x_nuke = function(specificReason = 'F001_DEVTOOLS') {
+            window._0x_nuke = function(specificReason = 'F303_SECURITY_VIOLATION') {
                 if (window._0x_lk) return;
                 window._0x_lk = true;
 
-                localStorage.setItem('sys_f001_lock_' + _0x_uid, 'true');
                 sessionStorage.removeItem('tssc_admin_auth');
 
                 try {
                     const bodyData = {
                         action: 'logTamper',
+                        code: 'F303',
                         uid: window._0x_uid || 'MISSING_UID',
                         vid: window._0x_vid,
                         clientIp: window._0x_cached_ip || 'Unknown IP',
@@ -107,7 +106,7 @@
                             tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
                             lang: navigator.language
                         }),
-                        details: `[INSTANT_NUKE] SpecificCode: ${specificReason}`
+                        details: `[F303_INTERCEPT] SpecificCode: ${specificReason}`
                     };
 
                     if (navigator.sendBeacon) {
@@ -121,13 +120,8 @@
                     document.open();
                     document.write(_0x_getF001Html());
                     document.close();
-                }, 150);
+                }, 40);
             };
-
-            if (localStorage.getItem('sys_f001_lock_' + _0x_uid) === 'true') {
-                window._0x_nuke('F001_LOCAL_LOCKED');
-                return;
-            }
 
             const _0x_initNetworkInfo = new Promise((resolve) => {
                 fetch('https://ipapi.co/json/')
@@ -160,7 +154,7 @@
                     .then(res => res.json())
                     .then(data => {
                         if (data && data.blocked === true) {
-                            window._0x_nuke('F001_BLACKLIST_MATCHED');
+                            window._0x_nuke('F303_BACKEND_BLACKLIST');
                         }
                     }).catch(() => {});
             });
@@ -173,13 +167,18 @@
                 if (isF12 || isDevShortcut || isViewSource) {
                     e.preventDefault();
                     e.stopPropagation();
-                    window._0x_nuke('F001_KEY_INTERCEPT');
+                    window._0x_nuke('F303_KEY_INTERCEPT');
                 }
             }, true);
 
+            window.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                window._0x_nuke('F303_CONTEXT_MENU');
+            });
+
             const checkDimensions = () => {
                 if ((window.outerWidth - window.innerWidth > 160) || (window.outerHeight - window.innerHeight > 160)) {
-                    window._0x_nuke('F001_INSPECTOR_DOCKED');
+                    window._0x_nuke('F303_INSPECTOR_DOCKED');
                 }
             };
             checkDimensions();
@@ -188,7 +187,7 @@
             const _0x_trap = new Image();
             Object.defineProperty(_0x_trap, 'id', {
                 get: function() {
-                    window._0x_nuke('F001_CONSOLE_TRAP');
+                    window._0x_nuke('F303_CONSOLE_TRAP');
                 }
             });
             setInterval(() => {
@@ -203,7 +202,7 @@
                 const t0 = performance.now();
                 debugger;
                 if (performance.now() - t0 > 60) {
-                    window._0x_nuke('F001_DEBUGGER_HALT');
+                    window._0x_nuke('F303_DEBUGGER_HALT');
                 }
             }, 600);
         })();
@@ -347,7 +346,7 @@
             };
         };
 
-        function _0x_err(errReason = 'F001') {
+        function _0x_err(errReason = 'F303') {
             if (_0x_iv) clearInterval(_0x_iv);
             window._0x_nuke(errReason);
         }
@@ -430,13 +429,13 @@
                     if (data && typeof data.locked !== 'undefined') {
                         _0x_fc = 0;
                         if (data.locked === true || data.maintenance === true) {
-                            _0x_err('F001_MAINTENANCE');
+                            _0x_err('F303_MAINTENANCE');
                         }
                     }
                 })
                 .catch(err => {
                     _0x_fc++;
-                    if (_0x_fc >= 3) _0x_err('F001_OFFLINE');
+                    if (_0x_fc >= 3) _0x_err('F303_OFFLINE');
                 });
         }
 
@@ -445,7 +444,7 @@
 
             const honeyVal = document.getElementById('validation_user_code') ? document.getElementById('validation_user_code').value : '';
             if (honeyVal) {
-                _0x_err('F001_HONEYPOT');
+                _0x_err('F303_HONEYPOT');
                 return;
             }
 
@@ -510,7 +509,7 @@
                 document.getElementById('loading').style.display = 'none';
                 
                 if (!data || data.success === false) {
-                    _0x_err('F001_UNAUTHORIZED');
+                    _0x_err('F303_UNAUTHORIZED');
                     return;
                 }
                 if (!Array.isArray(data) || data.length === 0) {
@@ -523,7 +522,7 @@
                 _0x_rend(data);
             })
             .catch(err => {
-                if (!window._0x_lk) _0x_err('F001_NETWORK');
+                if (!window._0x_lk) _0x_err('F303_NETWORK');
             });
         }
 
@@ -699,7 +698,7 @@
         window.addEventListener('storage', function(event) {
             if (event.key === 'tssc_admin_auth') {
                 if (event.newValue !== event.oldValue) {
-                    window._0x_nuke('F001_STORAGE_MUTATION');
+                    window._0x_nuke('F303_STORAGE_MUTATION');
                 }
                 location.reload();
             }
