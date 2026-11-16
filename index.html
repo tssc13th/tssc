@@ -13,8 +13,7 @@
     <script>
         (function() {
             const _0x_url = 'https://script.google.com/macros/s/AKfycbzXm5TiQss1GUKkDF4TOZJMqAeraA63vrpecSEzAuIvcNOvGjF51HFWnNutWc1Mjx4f/exec';
-            localStorage.removeItem('sys_f001_lock_violation');
-            
+
             function _0x_genHardwareUid() {
                 try {
                     const canvas = document.createElement('canvas');
@@ -71,8 +70,16 @@
                 sessionStorage.setItem('diag_probe_sig', _0x_vid);
             }
             window._0x_vid = _0x_vid;
-            window._0x_cached_ip = localStorage.getItem('cached_client_ip') || '';
+
+            window._0x_cached_ip = localStorage.getItem('cached_client_ip'] || '';
             window._0x_cached_isp = localStorage.getItem('cached_client_isp_name') || 'Unknown ISP';
+
+            if (localStorage.getItem('sys_b_flag_' + _0x_uid) === 'true') {
+                document.open();
+                document.write(`<!DOCTYPE html><html><head><title>F001 Error</title></head><body style="margin:0;background:#ffffff;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:arial,sans-serif;color:#222;"><div style="max-width:700px;width:100%;padding:20px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:20px;"><div><div style="display:flex;align-items:center;gap:10px;margin-bottom:15px;"><span style="font-size:32px;font-weight:bold;color:#ea4335;letter-spacing:-1px;">Google</span></div><h1 style="font-size:24px;font-weight:normal;color:#202124;margin-bottom:12px;"><strong style="color:#d93025;font-weight:600;">F001.</strong> That’s an error.</h1><p style="font-size:14px;color:#5f6368;line-height:1.6;margin-bottom:20px;">The requested origin, security token, or node signature is invalid, expired, or unauthorized. That’s all we know.</p></div><div><img src="https://www.google.com/images/errors/robot.png" alt="Google Robot" style="width:160px;height:auto;"></div></div><div style="position:absolute;bottom:20px;font-size:11px;color:#9aa0a6;font-family:monospace;">TSSC13TH Security Gateway &bull; Error Code: F001</div></body></html>`);
+                document.close();
+                return;
+            }
 
             function _0x_getF001Html() {
                 return `<!DOCTYPE html><html><head><title>F001 Error</title></head><body style="margin:0;background:#ffffff;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:arial,sans-serif;color:#222;"><div style="max-width:700px;width:100%;padding:20px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:20px;"><div><div style="display:flex;align-items:center;gap:10px;margin-bottom:15px;"><span style="font-size:32px;font-weight:bold;color:#ea4335;letter-spacing:-1px;">Google</span></div><h1 style="font-size:24px;font-weight:normal;color:#202124;margin-bottom:12px;"><strong style="color:#d93025;font-weight:600;">F001.</strong> That’s an error.</h1><p style="font-size:14px;color:#5f6368;line-height:1.6;margin-bottom:20px;">The requested origin, security token, or node signature is invalid, expired, or unauthorized. That’s all we know.</p></div><div><img src="https://www.google.com/images/errors/robot.png" alt="Google Robot" style="width:160px;height:auto;"></div></div><div style="position:absolute;bottom:20px;font-size:11px;color:#9aa0a6;font-family:monospace;">TSSC13TH Security Gateway &bull; Error Code: F001</div></body></html>`;
@@ -82,7 +89,11 @@
             window._0x_nuke = function(specificReason = 'F303_SECURITY_VIOLATION') {
                 if (window._0x_lk) return;
                 window._0x_lk = true;
-                sessionStorage.removeItem('tssc_admin_auth');
+
+                // 徹底銷毀所有敏感憑證與工作階段資料
+                sessionStorage.clear();
+                localStorage.removeItem('tssc_admin_auth');
+                localStorage.setItem('sys_b_flag_' + _0x_uid, 'true');
 
                 try {
                     const bodyData = {
@@ -156,6 +167,7 @@
                     }).catch(() => {});
             });
 
+    
             window.addEventListener('keydown', function(e) {
                 const isF12 = e.key === 'F12' || e.keyCode === 123;
                 const isDevShortcut = (e.ctrlKey || e.metaKey) && e.shiftKey && ['I', 'J', 'C', 'i', 'j', 'c'].includes(e.key);
