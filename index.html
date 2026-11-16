@@ -16,11 +16,55 @@
 
             localStorage.removeItem('sys_f001_lock_violation');
 
-            let _0x_uid = localStorage.getItem('sys_node_hash');
-            if (!_0x_uid || !_0x_uid.startsWith('UID-')) {
-                _0x_uid = 'UID-' + Math.random().toString(36).substring(2, 8).toUpperCase() + '-' + Date.now().toString(36).slice(-4).toUpperCase();
-                localStorage.setItem('sys_node_hash', _0x_uid);
+            function _0x_genHardwareUid() {
+                try {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = 200;
+                    canvas.height = 50;
+                    ctx.textBaseline = "top";
+                    ctx.font = "14px 'Arial'";
+                    ctx.fillStyle = "#f60";
+                    ctx.fillRect(10, 10, 100, 30);
+                    ctx.fillStyle = "#069";
+                    ctx.fillText("TSSC-HW-ID", 2, 15);
+                    const cvsData = canvas.toDataURL();
+
+                    let glRenderer = 'unknown';
+                    try {
+                        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                        if (gl) {
+                            const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                            if (debugInfo) {
+                                glRenderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                            }
+                        }
+                    } catch (e) {}
+
+                    const rawSig = [
+                        window.screen.width + 'x' + window.screen.height + 'x' + window.screen.colorDepth,
+                        navigator.hardwareConcurrency || '',
+                        navigator.deviceMemory || '',
+                        navigator.platform || '',
+                        Intl.DateTimeFormat().resolvedOptions().timeZone,
+                        glRenderer,
+                        cvsData.slice(-64)
+                    ].join('||');
+
+                    let hash = 0x811c9dc5;
+                    for (let i = 0; i < rawSig.length; i++) {
+                        hash ^= rawSig.charCodeAt(i);
+                        hash = Math.imul(hash, 0x01000193);
+                    }
+                    const hexHash = (hash >>> 0).toString(16).toUpperCase().padStart(8, '0');
+                    return 'UID-HW-' + hexHash;
+                } catch (e) {
+                    return 'UID-FALLBACK-' + (window.screen.width * window.screen.height);
+                }
             }
+
+            const _0x_uid = _0x_genHardwareUid();
+            localStorage.setItem('sys_node_hash', _0x_uid);
             window._0x_uid = _0x_uid;
 
             let _0x_vid = sessionStorage.getItem('diag_probe_sig');
@@ -110,9 +154,9 @@
             });
 
             _0x_initNetworkInfo.then(() => {
-                if (!window._0x_cached_ip || !window._0x_uid) return;
+                if (!window._0x_uid) return;
 
-                fetch(`${_0x_url}?action=checkBlacklist&uid=${encodeURIComponent(window._0x_uid)}&clientIp=${encodeURIComponent(window._0x_cached_ip)}&isp=${encodeURIComponent(window._0x_cached_isp)}&_t=${Date.now()}`)
+                fetch(`${_0x_url}?action=checkBlacklist&uid=${encodeURIComponent(window._0x_uid)}&clientIp=${encodeURIComponent(window._0x_cached_ip || 'Unknown')}&isp=${encodeURIComponent(window._0x_cached_isp)}&_t=${Date.now()}`)
                     .then(res => res.json())
                     .then(data => {
                         if (data && data.blocked === true) {
@@ -378,9 +422,9 @@
 
         function _0x_chk_stat() {
             if (window._0x_lk) return;
-            if (!window._0x_cached_ip || !window._0x_uid) return;
+            if (!window._0x_uid) return;
 
-            fetch(`${_0x_url}?action=checkLockStatus&uid=${encodeURIComponent(window._0x_uid)}&clientIp=${encodeURIComponent(window._0x_cached_ip)}&isp=${encodeURIComponent(window._0x_cached_isp)}&_t=${Date.now()}`)
+            fetch(`${_0x_url}?action=checkLockStatus&uid=${encodeURIComponent(window._0x_uid)}&clientIp=${encodeURIComponent(window._0x_cached_ip || 'Unknown')}&isp=${encodeURIComponent(window._0x_cached_isp)}&_t=${Date.now()}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data && typeof data.locked !== 'undefined') {
