@@ -16,8 +16,74 @@
 
             localStorage.removeItem('sys_f001_lock_violation');
 
+            let _0x_uid = localStorage.getItem('sys_node_hash');
+            if (!_0x_uid || !_0x_uid.startsWith('UID-')) {
+                _0x_uid = 'UID-' + Math.random().toString(36).substring(2, 8).toUpperCase() + '-' + Date.now().toString(36).slice(-4).toUpperCase();
+                localStorage.setItem('sys_node_hash', _0x_uid);
+            }
+            window._0x_uid = _0x_uid;
+
+            let _0x_vid = sessionStorage.getItem('diag_probe_sig');
+            if (!_0x_vid) {
+                _0x_vid = 'VID_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
+                sessionStorage.setItem('diag_probe_sig', _0x_vid);
+            }
+            window._0x_vid = _0x_vid;
+
             window._0x_cached_ip = localStorage.getItem('cached_client_ip') || '';
             window._0x_cached_isp = localStorage.getItem('cached_client_isp_name') || 'Unknown ISP';
+
+            function _0x_getF001Html() {
+                return `<!DOCTYPE html><html><head><title>F001 Error</title></head><body style="margin:0;background:#ffffff;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:arial,sans-serif;color:#222;"><div style="max-width:700px;width:100%;padding:20px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:20px;"><div><div style="display:flex;align-items:center;gap:10px;margin-bottom:15px;"><span style="font-size:32px;font-weight:bold;color:#ea4335;letter-spacing:-1px;">Google</span></div><h1 style="font-size:24px;font-weight:normal;color:#202124;margin-bottom:12px;"><strong style="color:#d93025;font-weight:600;">F001.</strong> That’s an error.</h1><p style="font-size:14px;color:#5f6368;line-height:1.6;margin-bottom:20px;">The requested origin, security token, or node signature is invalid, expired, or unauthorized. That’s all we know.</p></div><div><img src="https://www.google.com/images/errors/robot.png" alt="Google Robot" style="width:160px;height:auto;"></div></div><div style="position:absolute;bottom:20px;font-size:11px;color:#9aa0a6;font-family:monospace;">TSSC13TH Security Gateway &bull; Error Code: F001</div></body></html>`;
+            }
+            window._0x_getF001Html = _0x_getF001Html;
+
+            window._0x_nuke = function(specificReason = 'F001_DEVTOOLS') {
+                if (window._0x_lk) return;
+                window._0x_lk = true;
+
+                localStorage.setItem('sys_f001_lock_' + _0x_uid, 'true');
+                sessionStorage.removeItem('tssc_admin_auth');
+
+                try {
+                    const bodyData = {
+                        action: 'logTamper',
+                        uid: window._0x_uid || 'MISSING_UID',
+                        vid: window._0x_vid,
+                        clientIp: window._0x_cached_ip || 'Unknown IP',
+                        isp: window._0x_cached_isp || 'Unknown ISP',
+                        clientInfo: JSON.stringify({
+                            uid: window._0x_uid,
+                            vid: window._0x_vid,
+                            ip: window._0x_cached_ip,
+                            isp: window._0x_cached_isp,
+                            ua: navigator.userAgent,
+                            platform: navigator.platform || 'Unknown',
+                            res: window.screen.width + 'x' + window.screen.height,
+                            tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                            lang: navigator.language
+                        }),
+                        details: `[INSTANT_NUKE] SpecificCode: ${specificReason}`
+                    };
+
+                    if (navigator.sendBeacon) {
+                        navigator.sendBeacon(_0x_url, new Blob([JSON.stringify(bodyData)], {type: 'text/plain'}));
+                    } else {
+                        fetch(_0x_url, { method: 'POST', headers: {'Content-Type': 'text/plain'}, body: JSON.stringify(bodyData), keepalive: true }).catch(() => {});
+                    }
+                } catch (e) {}
+
+                setTimeout(() => {
+                    document.open();
+                    document.write(_0x_getF001Html());
+                    document.close();
+                }, 150);
+            };
+
+            if (localStorage.getItem('sys_f001_lock_' + _0x_uid) === 'true') {
+                window._0x_nuke('F001_LOCAL_LOCKED');
+                return;
+            }
 
             const _0x_initNetworkInfo = new Promise((resolve) => {
                 fetch('https://ipapi.co/json/')
@@ -43,27 +109,6 @@
                     });
             });
 
-            let _0x_uid = localStorage.getItem('sys_node_hash');
-            if (!_0x_uid || !_0x_uid.startsWith('UID-')) {
-                _0x_uid = 'UID-' + Math.random().toString(36).substring(2, 8).toUpperCase() + '-' + Date.now().toString(36).slice(-4).toUpperCase();
-                localStorage.setItem('sys_node_hash', _0x_uid);
-            }
-            window._0x_uid = _0x_uid;
-
-            let _0x_vid = sessionStorage.getItem('diag_probe_sig');
-            if (!_0x_vid) {
-                _0x_vid = 'VID_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
-                sessionStorage.setItem('diag_probe_sig', _0x_vid);
-            }
-            window._0x_vid = _0x_vid;
-
-            localStorage.removeItem('sys_f001_lock_' + _0x_uid);
-
-            function _0x_getF001Html() {
-                return `<!DOCTYPE html><html><head><title>F001 Error</title></head><body style="margin:0;background:#ffffff;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:arial,sans-serif;color:#222;"><div style="max-width:700px;width:100%;padding:20px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:20px;"><div><div style="display:flex;align-items:center;gap:10px;margin-bottom:15px;"><span style="font-size:32px;font-weight:bold;color:#ea4335;letter-spacing:-1px;">Google</span></div><h1 style="font-size:24px;font-weight:normal;color:#202124;margin-bottom:12px;"><strong style="color:#d93025;font-weight:600;">F001.</strong> That’s an error.</h1><p style="font-size:14px;color:#5f6368;line-height:1.6;margin-bottom:20px;">The requested origin, security token, or node signature is invalid, expired, or unauthorized. That’s all we know.</p></div><div><img src="https://www.google.com/images/errors/robot.png" alt="Google Robot" style="width:160px;height:auto;"></div></div><div style="position:absolute;bottom:20px;font-size:11px;color:#9aa0a6;font-family:monospace;">TSSC13TH Security Gateway &bull; Error Code: F001</div></body></html>`;
-            }
-            window._0x_getF001Html = _0x_getF001Html;
-
             _0x_initNetworkInfo.then(() => {
                 if (!window._0x_cached_ip || !window._0x_uid) return;
 
@@ -71,61 +116,10 @@
                     .then(res => res.json())
                     .then(data => {
                         if (data && data.blocked === true) {
-                            document.open();
-                            document.write(_0x_getF001Html());
-                            document.close();
-                            throw new Error('Blocked by Blacklist');
+                            window._0x_nuke('F001_BLACKLIST_MATCHED');
                         }
                     }).catch(() => {});
             });
-
-            window._0x_nuke = function(specificReason = 'F001_DEVTOOLS') {
-                if (window._0x_lk) return;
-                window._0x_lk = true;
-
-                localStorage.setItem('sys_f001_lock_' + _0x_uid, 'true');
-                sessionStorage.removeItem('tssc_admin_auth');
-
-                const sendNukeLog = () => {
-                    try {
-                        const bodyData = {
-                            action: 'logTamper',
-                            uid: window._0x_uid || 'MISSING_UID',
-                            vid: window._0x_vid,
-                            clientIp: window._0x_cached_ip || 'Unknown IP',
-                            isp: window._0x_cached_isp || 'Unknown ISP',
-                            clientInfo: JSON.stringify({
-                                uid: window._0x_uid,
-                                vid: window._0x_vid,
-                                ip: window._0x_cached_ip,
-                                isp: window._0x_cached_isp,
-                                ua: navigator.userAgent,
-                                platform: navigator.platform || 'Unknown',
-                                res: window.screen.width + 'x' + window.screen.height,
-                                tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                                lang: navigator.language
-                            }),
-                            details: `[INSTANT_NUKE] SpecificCode: ${specificReason}`
-                        };
-
-                        if (navigator.sendBeacon) {
-                            navigator.sendBeacon(_0x_url, new Blob([JSON.stringify(bodyData)], {type: 'text/plain'}));
-                        } else {
-                            fetch(_0x_url, { method: 'POST', headers: {'Content-Type': 'text/plain'}, body: JSON.stringify(bodyData), keepalive: true }).catch(() => {});
-                        }
-                    } catch (e) {}
-                };
-
-                if (!window._0x_cached_ip) {
-                    _0x_initNetworkInfo.then(sendNukeLog);
-                } else {
-                    sendNukeLog();
-                }
-
-                document.open();
-                document.write(_0x_getF001Html());
-                document.close();
-            };
 
             window.addEventListener('keydown', function(e) {
                 const isF12 = e.key === 'F12' || e.keyCode === 123;
