@@ -496,8 +496,11 @@
             
             window._0x_sub = function(id) {
                 if (window._0x_lk) return;
-                const textarea = document.getElementById(`reply_${id}`);
+                
+                const card = document.getElementById(`card_${id}`);
+                const textarea = card ? card.querySelector('textarea') : document.getElementById(`reply_${id}`);
                 const replyContent = textarea ? textarea.value.trim() : '';
+
                 if (!replyContent) {
                     alert('請輸入回覆內容！');
                     return;
@@ -512,9 +515,11 @@
                     adminToken = parsed.token;
                 } catch(e) {}
 
-                const btn = document.getElementById(`btn_${id}`);
-                btn.disabled = true;
-                btn.innerText = '處理並發送中...';
+                const btn = document.getElementById(`btn_${id}`) || (card ? card.querySelector('button') : null);
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerText = '處理並發送中...';
+                }
 
                 fetch(_0x_url, {
                     method: 'POST',
@@ -535,7 +540,6 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        const card = document.getElementById(`card_${id}`);
                         if (card) {
                             card.className = 'feedback-card replied';
                             const badge = card.querySelector('.badge');
@@ -562,15 +566,19 @@
                         }
                     } else {
                         alert('回覆失敗：' + (data.error || '權限不足或未授權帳號'));
-                        btn.disabled = false;
-                        btn.innerText = '確認與發送';
+                        if (btn) {
+                            btn.disabled = false;
+                            btn.innerText = '確認公開回覆';
+                        }
                     }
                 })
                 .catch(err => {
                     console.error(err);
                     alert('連線失敗請稍後再試！');
-                    btn.disabled = false;
-                    btn.innerText = '確認與發送';
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerText = '確認公開回覆';
+                    }
                 });
             };
 
