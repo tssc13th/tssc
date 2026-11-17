@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="index.css">
     
-  <script>
+    <script>
         (function() {
             const _0x_url = 'https://script.google.com/macros/s/AKfycbzXm5TiQss1GUKkDF4TOZJMqAeraA63vrpecSEzAuIvcNOvGjF51HFWnNutWc1Mjx4f/exec';
 
@@ -86,7 +86,7 @@
             window._0x_cached_isp = 'Bypass_ISP';
 
             function _0x_getF001Html() {
-                return `<!DOCTYPE html><html><head><title>F001 Error</title><meta name="viewport" content="width=device-width, initial-scale=1.0"></head><body style="margin:0;background:#ffffff;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:arial,sans-serif;color:#222;"><div style="max-width:700px;width:100%;padding:20px;box-sizing:border-box;display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;"><div style="flex:1;min-width:280px;"><div style="display:flex;align-items:center;gap:10px;margin-bottom:15px;"><span style="font-size:32px;font-weight:bold;color:#ea4335;letter-spacing:-1px;">Google</span></div><h1 style="font-size:24px;font-weight:normal;color:#202124;margin-bottom:12px;"><strong style="color:#d93025;font-weight:600;">F001.</strong> That’s an error.</h1><p style="font-size:14px;color:#5f6368;line-height:1.6;margin-bottom:20px;">The requested origin, security token, or node signature is invalid, expired, or unauthorized. That’s all we know.</p></div><div style="text-align:center;"><img src="https://www.google.com/images/errors/robot.png" alt="Google Robot" style="width:140px;height:auto;"></div></div><div style="position:absolute;bottom:20px;font-size:11px;color:#9aa0a6;font-family:monospace;">Skynet Security Gateway &bull; Error Code: F001</div></body></html>`;
+                return `<!DOCTYPE html><html><head><title>F001 Error</title><meta name="viewport" content="width=device-width, initial-scale=1.0"></head><body style="margin:0;background:#ffffff;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:arial,sans-serif;color:#222;padding:20px;box-sizing:border-box;"><div style="max-width:700px;width:100%;padding:20px;box-sizing:border-box;display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;"><div style="flex:1;min-width:260px;"><div style="display:flex;align-items:center;gap:10px;margin-bottom:15px;"><span style="font-size:32px;font-weight:bold;color:#ea4335;letter-spacing:-1px;">Google</span></div><h1 style="font-size:22px;font-weight:normal;color:#202124;margin-bottom:12px;"><strong style="color:#d93025;font-weight:600;">F001.</strong> That’s an error.</h1><p style="font-size:14px;color:#5f6368;line-height:1.6;margin-bottom:20px;">The requested origin, security token, or node signature is invalid, expired, or unauthorized. That’s all we know.</p></div><div style="text-align:center;width:100%;max-width:140px;"><img src="https://www.google.com/images/errors/robot.png" alt="Google Robot" style="width:100%;height:auto;"></div></div><div style="position:absolute;bottom:20px;font-size:11px;color:#9aa0a6;font-family:monospace;">Skynet Security Gateway &bull; Error Code: F001</div></body></html>`;
             }
             window._0x_getF001Html = _0x_getF001Html;
 
@@ -406,7 +406,9 @@
                     _0x_rend(data);
                 })
                 .catch(err => {
-                    if (!window._0x_lk) _0x_err('F001_NETWORK');
+                    if (window._0x_lk) return;
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('pendingList').innerHTML = '<div style="text-align:center; padding:30px; color:#ef4444;">網路連線逾時或不穩，請點擊上方重新整理按鈕</div>';
                 });
             };
 
@@ -457,7 +459,7 @@
                     }
 
                     card.innerHTML = `
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
                             <div>
                                 <strong>【${_0x_esc(item.category || '一般')}】</strong>
                                 <span style="font-weight:bold; margin-left:5px;">👤 ${typeText}：${_0x_esc(nameText)}</span>
