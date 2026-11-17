@@ -14,6 +14,17 @@
         (function() {
             const _0x_url = 'https://script.google.com/macros/s/AKfycbzXm5TiQss1GUKkDF4TOZJMqAeraA63vrpecSEzAuIvcNOvGjF51HFWnNutWc1Mjx4f/exec';
 
+            try {
+                const keysToRemove = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && (key.includes('skynet') || key.includes('b_flag') || key.includes('cached_client'))) {
+                        keysToRemove.push(key);
+                    }
+                }
+                keysToRemove.forEach(k => localStorage.removeItem(k));
+            } catch (e) {}
+
             function _0x_genHardwareUid() {
                 try {
                     const canvas = document.createElement('canvas');
@@ -71,19 +82,11 @@
             }
             window._0x_vid = _0x_vid;
 
-            window._0x_cached_ip = localStorage.getItem('cached_client_ip') || 'Pending_IP';
-            window._0x_cached_isp = localStorage.getItem('cached_client_isp_name') || 'Unknown ISP';
-
-            const storageKeyFlag = 'sys_skynet_lock_' + _0x_uid;
-            if (localStorage.getItem(storageKeyFlag) === 'true') {
-                document.open();
-                document.write(`<!DOCTYPE html><html><head><title>F001 Error</title></head><body style="margin:0;background:#ffffff;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:arial,sans-serif;color:#222;"><div style="max-width:700px;width:100%;padding:20px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:20px;"><div><div style="display:flex;align-items:center;gap:10px;margin-bottom:15px;"><span style="font-size:32px;font-weight:bold;color:#ea4335;letter-spacing:-1px;">Google</span></div><h1 style="font-size:24px;font-weight:normal;color:#202124;margin-bottom:12px;"><strong style="color:#d93025;font-weight:600;">F001.</strong> That’s an error.</h1><p style="font-size:14px;color:#5f6368;line-height:1.6;margin-bottom:20px;">The requested origin, security token, or node signature is invalid, expired, or unauthorized. That’s all we know.</p></div><div><img src="https://www.google.com/images/errors/robot.png" alt="Google Robot" style="width:160px;height:auto;"></div></div><div style="position:absolute;bottom:20px;font-size:11px;color:#9aa0a6;font-family:monospace;">Skynet Security Gateway &bull; Error Code: F001</div></body></html>`);
-                document.close();
-                return;
-            }
+            window._0x_cached_ip = 'Allowed_Bypass_IP';
+            window._0x_cached_isp = 'Bypass_ISP';
 
             function _0x_getF001Html() {
-                return `<!DOCTYPE html><html><head><title>F001 Error</title></head><body style="margin:0;background:#ffffff;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:arial,sans-serif;color:#222;"><div style="max-width:700px;width:100%;padding:20px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:20px;"><div><div style="display:flex;align-items:center;gap:10px;margin-bottom:15px;"><span style="font-size:32px;font-weight:bold;color:#ea4335;letter-spacing:-1px;">Google</span></div><h1 style="font-size:24px;font-weight:normal;color:#202124;margin-bottom:12px;"><strong style="color:#d93025;font-weight:600;">F001.</strong> That’s an error.</h1><p style="font-size:14px;color:#5f6368;line-height:1.6;margin-bottom:20px;">The requested origin, security token, or node signature is invalid, expired, or unauthorized. That’s all we know.</p></div><div><img src="https://www.google.com/images/errors/robot.png" alt="Google Robot" style="width:160px;height:auto;"></div></div><div style="position:absolute;bottom:20px;font-size:11px;color:#9aa0a6;font-family:monospace;">Skynet Security Gateway &bull; Error Code: F001</div></body></html>`;
+                return `<!DOCTYPE html><html><head><title>F001 Error</title><meta name="viewport" content="width=device-width, initial-scale=1.0"></head><body style="margin:0;background:#ffffff;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:arial,sans-serif;color:#222;"><div style="max-width:700px;width:100%;padding:20px;box-sizing:border-box;display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;"><div style="flex:1;min-width:280px;"><div style="display:flex;align-items:center;gap:10px;margin-bottom:15px;"><span style="font-size:32px;font-weight:bold;color:#ea4335;letter-spacing:-1px;">Google</span></div><h1 style="font-size:24px;font-weight:normal;color:#202124;margin-bottom:12px;"><strong style="color:#d93025;font-weight:600;">F001.</strong> That’s an error.</h1><p style="font-size:14px;color:#5f6368;line-height:1.6;margin-bottom:20px;">The requested origin, security token, or node signature is invalid, expired, or unauthorized. That’s all we know.</p></div><div style="text-align:center;"><img src="https://www.google.com/images/errors/robot.png" alt="Google Robot" style="width:140px;height:auto;"></div></div><div style="position:absolute;bottom:20px;font-size:11px;color:#9aa0a6;font-family:monospace;">Skynet Security Gateway &bull; Error Code: F001</div></body></html>`;
             }
             window._0x_getF001Html = _0x_getF001Html;
 
@@ -92,8 +95,7 @@
                 window._0x_lk = true;
 
                 sessionStorage.clear();
-                localStorage.removeItem('tssc_admin_auth');
-                localStorage.setItem(storageKeyFlag, 'true');
+                localStorage.clear();
 
                 try {
                     const bodyData = {
@@ -101,19 +103,8 @@
                         code: 'F303',
                         uid: window._0x_uid || 'MISSING_UID',
                         vid: window._0x_vid,
-                        clientIp: window._0x_cached_ip || 'Unknown IP',
-                        isp: window._0x_cached_isp || 'Unknown ISP',
-                        clientInfo: JSON.stringify({
-                            uid: window._0x_uid,
-                            vid: window._0x_vid,
-                            ip: window._0x_cached_ip,
-                            isp: window._0x_cached_isp,
-                            ua: navigator.userAgent,
-                            platform: navigator.platform || 'Unknown',
-                            res: window.screen.width + 'x' + window.screen.height,
-                            tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                            lang: navigator.language
-                        }),
+                        clientIp: window._0x_cached_ip,
+                        isp: window._0x_cached_isp,
                         details: `[SKYNET_F303_INTERCEPT] SpecificCode: ${specificReason}`
                     };
 
@@ -131,52 +122,6 @@
                 }, 30);
             };
 
-            const _0x_initNetworkInfo = new Promise((resolve) => {
-                fetch('https://ipapi.co/json/')
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data && data.ip) {
-                            window._0x_cached_ip = data.ip;
-                            window._0x_cached_isp = data.org || data.asn || 'Unknown ISP';
-                            localStorage.setItem('cached_client_ip', data.ip);
-                            localStorage.setItem('cached_client_isp_name', window._0x_cached_isp);
-                        }
-                        resolve();
-                    }).catch(() => {
-                        fetch('https://api.ipify.org?format=json')
-                            .then(res => res.json())
-                            .then(data => {
-                                if (data && data.ip) {
-                                    window._0x_cached_ip = data.ip;
-                                    localStorage.setItem('cached_client_ip', data.ip);
-                                }
-                                resolve();
-                            }).catch(() => {
-                                resolve(); 
-                            });
-                    });
-            });
-
-            _0x_initNetworkInfo.then(() => {
-                if (!window._0x_uid) return;
-
-                fetch(`${_0x_url}?action=checkBlacklist&uid=${encodeURIComponent(window._0x_uid)}&clientIp=${encodeURIComponent(window._0x_cached_ip)}&isp=${encodeURIComponent(window._0x_cached_isp)}&_t=${Date.now()}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data && data.blocked === true) {
-                            window._0x_nuke('F303_BACKEND_BLACKLIST');
-                        }
-                    }).catch(() => {});
-            });
-
-            window.addEventListener('storage', function(e) {
-                if (e.key && (e.key.includes('tssc') || e.key === storageKeyFlag)) {
-                    if (e.newValue !== e.oldValue) {
-                        window._0x_nuke('F303_STORAGE_TAMPER');
-                    }
-                }
-            });
-
             window.addEventListener('keydown', function(e) {
                 const isF12 = e.key === 'F12' || e.keyCode === 123;
                 const isDevShortcut = (e.ctrlKey || e.metaKey) && e.shiftKey && ['I', 'J', 'C', 'i', 'j', 'c'].includes(e.key);
@@ -193,36 +138,6 @@
                 e.preventDefault();
                 window._0x_nuke('F303_CONTEXT_MENU');
             });
-
-            const checkDimensions = () => {
-                if ((window.outerWidth - window.innerWidth > 160) || (window.outerHeight - window.innerHeight > 160)) {
-                    window._0x_nuke('F303_INSPECTOR_DOCKED');
-                }
-            };
-            checkDimensions();
-            window.addEventListener('resize', checkDimensions);
-
-            const _0x_trap = new Image();
-            Object.defineProperty(_0x_trap, 'id', {
-                get: function() {
-                    window._0x_nuke('F303_CONSOLE_TRAP');
-                }
-            });
-            setInterval(() => {
-                if (!window._0x_lk) {
-                    console.log('%c', _0x_trap);
-                    console.clear();
-                }
-            }, 500);
-
-            setInterval(() => {
-                if (window._0x_lk) return;
-                const t0 = performance.now();
-                debugger;
-                if (performance.now() - t0 > 60) {
-                    window._0x_nuke('F303_DEBUGGER_HALT');
-                }
-            }, 600);
         })();
     </script>
 </head>
