@@ -85,8 +85,60 @@
             window._0x_cached_ip = 'Allowed_Bypass_IP';
             window._0x_cached_isp = 'Bypass_ISP';
 
-            function _0x_getF001Html() {
-                return `<!DOCTYPE html><html><head><title>F001 Error</title><meta name="viewport" content="width=device-width, initial-scale=1.0"></head><body style="margin:0;background:#ffffff;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:arial,sans-serif;color:#222;padding:20px;box-sizing:border-box;"><div style="max-width:700px;width:100%;padding:20px;box-sizing:border-box;display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;"><div style="flex:1;min-width:260px;"><div style="display:flex;align-items:center;gap:10px;margin-bottom:15px;"><span style="font-size:32px;font-weight:bold;color:#ea4335;letter-spacing:-1px;">天網系統</span></div><h1 style="font-size:22px;font-weight:normal;color:#202124;margin-bottom:12px;"><strong style="color:#d93025;font-weight:600;">F001.</strong> That’s an error.</h1><p style="font-size:14px;color:#5f6368;line-height:1.6;margin-bottom:20px;">The requested origin, security token, or node signature is invalid, expired, or unauthorized. That’s all we know.</p></div><div style="text-align:center;width:100%;max-width:140px;"><img src="https://www.google.com/images/errors/robot.png" alt="Google Robot" style="width:100%;height:auto;"></div></div><div style="position:absolute;bottom:20px;font-size:11px;color:#9aa0a6;font-family:monospace;">Skynet Security Gateway &bull; Error Code: F001</div></body></html>`;
+            function _0x_getF001Html(reasonCode) {
+                return `<!DOCTYPE html>
+                <html lang="zh-TW">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Access Denied - F001</title>
+                    <style>
+                        body {
+                            margin: 0; background: #f8fafc; height: 100vh; display: flex;
+                            flex-direction: column; align-items: center; justify-content: center;
+                            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #1e293b; padding: 20px; box-sizing: border-box;
+                        }
+                        .error-card {
+                            background: #ffffff; max-width: 600px; width: 100%; padding: 30px;
+                            border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border-top: 5px solid #ef4444;
+                            box-sizing: border-box; text-align: left;
+                        }
+                        .error-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+                        .error-code { font-size: 24px; font-weight: 700; color: #ef4444; }
+                        .error-title { font-size: 18px; font-weight: 600; color: #0f172a; margin: 0; }
+                        .error-desc { font-size: 14px; color: #64748b; line-height: 1.6; margin-bottom: 20px; }
+                        .meta-box {
+                            background: #f1f5f9; padding: 12px 16px; border-radius: 8px; font-family: monospace;
+                            font-size: 12px; color: #334155; word-break: break-all; margin-bottom: 20px; border: 1px solid #e2e8f0;
+                        }
+                        .meta-box span { display: block; margin-bottom: 4px; }
+                        .footer-note { font-size: 12px; color: #94a3b8; text-align: center; margin-top: 15px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="error-card">
+                        <div class="error-header">
+                            <div>
+                                <div class="error-code">F001 系統安全攔截</div>
+                                <h1 class="error-title">存取請求未獲授權或已失效</h1>
+                            </div>
+                        </div>
+                        <p class="error-desc">
+                            由於安全檢核未通過、憑證過期或來源不符，天網系統已強制終止本次工作階段
+                        </p>
+                        <div class="meta-box">
+                            <span><strong>Device UID:</strong> ${window._0x_uid || 'UNKNOWN'}</span>
+                            <span><strong>Session VID:</strong> ${window._0x_vid || 'UNKNOWN'}</span>
+                            <span><strong>Reason Code:</strong> ${reasonCode || 'F001_SECURITY_VIOLATION'}</span>
+                            <span><strong>Timestamp:</strong> ${new Date().toISOString()}</span>
+                        </div>
+                        <div style="text-align: right;">
+                            <button onclick="location.reload()" style="background: #0f172a; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-size: 14px; cursor: pointer;">重新嘗試載入</button>
+                        </div>
+                    </div>
+                    <div class="footer-note">Skynet Security Gateway &bull; TSSC13TH Protected System</div>
+                </body>
+                </html>`;
             }
             window._0x_getF001Html = _0x_getF001Html;
 
@@ -117,7 +169,7 @@
 
                 setTimeout(() => {
                     document.open();
-                    document.write(_0x_getF001Html());
+                    document.write(_0x_getF001Html(specificReason));
                     document.close();
                 }, 30);
             };
