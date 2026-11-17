@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="index.css">
     
     <script>
+  
         (function() {
             const _0x_url = 'https://script.google.com/macros/s/AKfycbzXm5TiQss1GUKkDF4TOZJMqAeraA63vrpecSEzAuIvcNOvGjF51HFWnNutWc1Mjx4f/exec';
 
@@ -25,7 +26,7 @@
                     ctx.fillStyle = "#f60";
                     ctx.fillRect(10, 10, 100, 30);
                     ctx.fillStyle = "#069";
-                    ctx.fillText("TSSC-HW-ID", 2, 15);
+                    ctx.fillText("SKYNET-HW-ID", 2, 15);
                     const cvsData = canvas.toDataURL();
 
                     let glRenderer = 'unknown';
@@ -55,13 +56,19 @@
                         hash = Math.imul(hash, 0x01000193);
                     }
                     const hexHash = (hash >>> 0).toString(16).toUpperCase().padStart(8, '0');
-                    return 'UID-HW-' + hexHash;
+                    return 'SKYNET-HW-' + hexHash;
                 } catch (e) {
-                    return 'UID-FALLBACK-' + (window.screen.width * window.screen.height);
+                    return null; 
                 }
             }
 
             const _0x_uid = _0x_genHardwareUid();
+            if (!_0x_uid || _0x_uid.indexOf('SKYNET-HW-') === -1) {
+                document.open();
+                document.write(`<!DOCTYPE html><html><head><title>F001 Error</title></head><body style="margin:0;background:#ffffff;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:arial,sans-serif;color:#222;"><div style="max-width:700px;width:100%;padding:20px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:20px;"><div><div style="display:flex;align-items:center;gap:10px;margin-bottom:15px;"><span style="font-size:32px;font-weight:bold;color:#ea4335;letter-spacing:-1px;">Google</span></div><h1 style="font-size:24px;font-weight:normal;color:#202124;margin-bottom:12px;"><strong style="color:#d93025;font-weight:600;">F001.</strong> That’s an error.</h1><p style="font-size:14px;color:#5f6368;line-height:1.6;margin-bottom:20px;">The requested origin, security token, or node signature is invalid, expired, or unauthorized. That’s all we know.</p></div><div><img src="https://www.google.com/images/errors/robot.png" alt="Google Robot" style="width:160px;height:auto;"></div></div><div style="position:absolute;bottom:20px;font-size:11px;color:#9aa0a6;font-family:monospace;">Skynet Security Gateway &bull; Error Code: F001</div></body></html>`);
+                document.close();
+                return;
+            }
             window._0x_uid = _0x_uid;
 
             let _0x_vid = sessionStorage.getItem('diag_probe_sig');
@@ -71,18 +78,19 @@
             }
             window._0x_vid = _0x_vid;
 
-            window._0x_cached_ip = localStorage.getItem('cached_client_ip'] || '';
+            window._0x_cached_ip = localStorage.getItem('cached_client_ip') || '';
             window._0x_cached_isp = localStorage.getItem('cached_client_isp_name') || 'Unknown ISP';
 
-            if (localStorage.getItem('sys_b_flag_' + _0x_uid) === 'true') {
+            const storageKeyFlag = 'sys_skynet_lock_' + _0x_uid;
+            if (localStorage.getItem(storageKeyFlag) === 'true') {
                 document.open();
-                document.write(`<!DOCTYPE html><html><head><title>F001 Error</title></head><body style="margin:0;background:#ffffff;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:arial,sans-serif;color:#222;"><div style="max-width:700px;width:100%;padding:20px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:20px;"><div><div style="display:flex;align-items:center;gap:10px;margin-bottom:15px;"><span style="font-size:32px;font-weight:bold;color:#ea4335;letter-spacing:-1px;">Google</span></div><h1 style="font-size:24px;font-weight:normal;color:#202124;margin-bottom:12px;"><strong style="color:#d93025;font-weight:600;">F001.</strong> That’s an error.</h1><p style="font-size:14px;color:#5f6368;line-height:1.6;margin-bottom:20px;">The requested origin, security token, or node signature is invalid, expired, or unauthorized. That’s all we know.</p></div><div><img src="https://www.google.com/images/errors/robot.png" alt="Google Robot" style="width:160px;height:auto;"></div></div><div style="position:absolute;bottom:20px;font-size:11px;color:#9aa0a6;font-family:monospace;">TSSC13TH Security Gateway &bull; Error Code: F001</div></body></html>`);
+                document.write(`<!DOCTYPE html><html><head><title>F001 Error</title></head><body style="margin:0;background:#ffffff;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:arial,sans-serif;color:#222;"><div style="max-width:700px;width:100%;padding:20px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:20px;"><div><div style="display:flex;align-items:center;gap:10px;margin-bottom:15px;"><span style="font-size:32px;font-weight:bold;color:#ea4335;letter-spacing:-1px;">Google</span></div><h1 style="font-size:24px;font-weight:normal;color:#202124;margin-bottom:12px;"><strong style="color:#d93025;font-weight:600;">F001.</strong> That’s an error.</h1><p style="font-size:14px;color:#5f6368;line-height:1.6;margin-bottom:20px;">The requested origin, security token, or node signature is invalid, expired, or unauthorized. That’s all we know.</p></div><div><img src="https://www.google.com/images/errors/robot.png" alt="Google Robot" style="width:160px;height:auto;"></div></div><div style="position:absolute;bottom:20px;font-size:11px;color:#9aa0a6;font-family:monospace;">Skynet Security Gateway &bull; Error Code: F001</div></body></html>`);
                 document.close();
                 return;
             }
 
             function _0x_getF001Html() {
-                return `<!DOCTYPE html><html><head><title>F001 Error</title></head><body style="margin:0;background:#ffffff;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:arial,sans-serif;color:#222;"><div style="max-width:700px;width:100%;padding:20px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:20px;"><div><div style="display:flex;align-items:center;gap:10px;margin-bottom:15px;"><span style="font-size:32px;font-weight:bold;color:#ea4335;letter-spacing:-1px;">Google</span></div><h1 style="font-size:24px;font-weight:normal;color:#202124;margin-bottom:12px;"><strong style="color:#d93025;font-weight:600;">F001.</strong> That’s an error.</h1><p style="font-size:14px;color:#5f6368;line-height:1.6;margin-bottom:20px;">The requested origin, security token, or node signature is invalid, expired, or unauthorized. That’s all we know.</p></div><div><img src="https://www.google.com/images/errors/robot.png" alt="Google Robot" style="width:160px;height:auto;"></div></div><div style="position:absolute;bottom:20px;font-size:11px;color:#9aa0a6;font-family:monospace;">TSSC13TH Security Gateway &bull; Error Code: F001</div></body></html>`;
+                return `<!DOCTYPE html><html><head><title>F001 Error</title></head><body style="margin:0;background:#ffffff;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:arial,sans-serif;color:#222;"><div style="max-width:700px;width:100%;padding:20px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:20px;"><div><div style="display:flex;align-items:center;gap:10px;margin-bottom:15px;"><span style="font-size:32px;font-weight:bold;color:#ea4335;letter-spacing:-1px;">Google</span></div><h1 style="font-size:24px;font-weight:normal;color:#202124;margin-bottom:12px;"><strong style="color:#d93025;font-weight:600;">F001.</strong> That’s an error.</h1><p style="font-size:14px;color:#5f6368;line-height:1.6;margin-bottom:20px;">The requested origin, security token, or node signature is invalid, expired, or unauthorized. That’s all we know.</p></div><div><img src="https://www.google.com/images/errors/robot.png" alt="Google Robot" style="width:160px;height:auto;"></div></div><div style="position:absolute;bottom:20px;font-size:11px;color:#9aa0a6;font-family:monospace;">Skynet Security Gateway &bull; Error Code: F001</div></body></html>`;
             }
             window._0x_getF001Html = _0x_getF001Html;
 
@@ -90,10 +98,9 @@
                 if (window._0x_lk) return;
                 window._0x_lk = true;
 
-                // 徹底銷毀所有敏感憑證與工作階段資料
                 sessionStorage.clear();
                 localStorage.removeItem('tssc_admin_auth');
-                localStorage.setItem('sys_b_flag_' + _0x_uid, 'true');
+                localStorage.setItem(storageKeyFlag, 'true');
 
                 try {
                     const bodyData = {
@@ -114,7 +121,7 @@
                             tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
                             lang: navigator.language
                         }),
-                        details: `[F303_INTERCEPT] SpecificCode: ${specificReason}`
+                        details: `[SKYNET_F303_INTERCEPT] SpecificCode: ${specificReason}`
                     };
 
                     if (navigator.sendBeacon) {
@@ -156,9 +163,12 @@
             });
 
             _0x_initNetworkInfo.then(() => {
-                if (!window._0x_uid) return;
+                if (!window._0x_uid || !window._0x_cached_ip) {
+                    window._0x_nuke('F303_NODE_INITIALIZATION_FAILED');
+                    return;
+                }
 
-                fetch(`${_0x_url}?action=checkBlacklist&uid=${encodeURIComponent(window._0x_uid)}&clientIp=${encodeURIComponent(window._0x_cached_ip || 'Unknown')}&isp=${encodeURIComponent(window._0x_cached_isp)}&_t=${Date.now()}`)
+                fetch(`${_0x_url}?action=checkBlacklist&uid=${encodeURIComponent(window._0x_uid)}&clientIp=${encodeURIComponent(window._0x_cached_ip)}&isp=${encodeURIComponent(window._0x_cached_isp)}&_t=${Date.now()}`)
                     .then(res => res.json())
                     .then(data => {
                         if (data && data.blocked === true) {
@@ -167,7 +177,12 @@
                     }).catch(() => {});
             });
 
-    
+            window.addEventListener('storage', function(e) {
+                if (e.key && e.key.includes('tssc') || e.key === storageKeyFlag) {
+                    window._0x_nuke('F303_STORAGE_TAMPER');
+                }
+            });
+
             window.addEventListener('keydown', function(e) {
                 const isF12 = e.key === 'F12' || e.keyCode === 123;
                 const isDevShortcut = (e.ctrlKey || e.metaKey) && e.shiftKey && ['I', 'J', 'C', 'i', 'j', 'c'].includes(e.key);
@@ -292,441 +307,396 @@
     </footer>
 
     <script>
-        const _0x_url = 'https://script.google.com/macros/s/AKfycbzXm5TiQss1GUKkDF4TOZJMqAeraA63vrpecSEzAuIvcNOvGjF51HFWnNutWc1Mjx4f/exec';
-        const _0x_cid = '434067788519-6s6r01fhhtn2d5200hmu2aqsh9v6dtoh.apps.googleusercontent.com';
-        
-        let _0x_iv = null;
-        let _0x_fc = 0;
-        let _0x_ct = 'pending';
 
-        function _0x_cvs() {
-            try {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                canvas.width = 200;
-                canvas.height = 50;
-                ctx.textBaseline = "top";
-                ctx.font = "14px 'Arial'";
-                ctx.fillStyle = "#f60";
-                ctx.fillRect(10, 10, 100, 30);
-                ctx.fillStyle = "#069";
-                ctx.fillText("TSSC-Security-Check", 2, 15);
-                ctx.fillStyle = "rgba(102, 204, 0, 0.7)";
-                ctx.fillText("TSSC-Security-Check", 4, 17);
-                return canvas.toDataURL().slice(-32);
-            } catch (e) {
-                return 'Canvas_Not_Supported';
-            }
-        }
+        (function() {
+            const _0x_url = 'https://script.google.com/macros/s/AKfycbzXm5TiQss1GUKkDF4TOZJMqAeraA63vrpecSEzAuIvcNOvGjF51HFWnNutWc1Mjx4f/exec';
+            const _0x_cid = '434067788519-6s6r01fhhtn2d5200hmu2aqsh9v6dtoh.apps.googleusercontent.com';
 
-        function _0x_jwt(token) {
-            try {
-                const base64Url = token.split('.')[1];
-                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-                    return '%' + ('0' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
-                return JSON.parse(jsonPayload);
-            } catch (e) {
-                return null;
-            }
-        }
-
-        const _0x_met = () => {
-            const honeyVal = document.getElementById('validation_user_code') ? document.getElementById('validation_user_code').value : '';
-            return {
-                uid: window._0x_uid || 'MISSING_UID',
-                vid: window._0x_vid,
-                clientIp: window._0x_cached_ip || 'Unknown IP',
-                isp: window._0x_cached_isp || 'Unknown ISP',
-                trap: honeyVal,
-                ua: navigator.userAgent,
-                platform: navigator.platform || navigator.userAgentData?.platform || 'Unknown',
-                res: window.screen.width + 'x' + window.screen.height,
-                cpu: navigator.hardwareConcurrency || 'Unknown',
-                ram: navigator.deviceMemory || 'Unknown',
-                lang: navigator.language,
-                tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                touch: navigator.maxTouchPoints || 0,
-                canvas: _0x_cvs(),
-                ts: new Date().toISOString()
-            };
-        };
-
-        function _0x_err(errReason = 'F303') {
-            if (_0x_iv) clearInterval(_0x_iv);
-            window._0x_nuke(errReason);
-        }
-
-        function _0x8b1f() {
-            if (window._0x_lk) return;
-            const redirectUri = 'https://tssc13th.github.io/tssc/';
-            const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
-                `client_id=${encodeURIComponent(_0x_cid)}` +
-                `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-                `&response_type=id_token` +
-                `&scope=${encodeURIComponent('openid email profile')}` +
-                `&nonce=${Date.now()}` +
-                `&prompt=select_account`; 
-
-            window.location.href = googleAuthUrl;
-        }
-
-        function _0x_chk_token() {
-            const hash = window.location.hash.substring(1);
-            if (!hash) return false;
-
-            const params = new URLSearchParams(hash);
-            const idToken = params.get('id_token');
-
-            if (idToken) {
-                const payload = _0x_jwt(idToken);
-                if (payload && payload.email) {
-                    const email = payload.email.toLowerCase();
-                    const adminData = { email: email, token: idToken, timestamp: Date.now() };
-                    sessionStorage.setItem('tssc_admin_auth', JSON.stringify(adminData));
-                    window.history.replaceState(null, null, window.location.pathname);
-                    return true;
+            function _0x_jwt(token) {
+                try {
+                    const base64Url = token.split('.')[1];
+                    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                        return '%' + ('0' + c.charCodeAt(0).toString(16)).slice(-2);
+                    }).join(''));
+                    return JSON.parse(jsonPayload);
+                } catch (e) {
+                    return null;
                 }
             }
-            return false;
-        }
 
-        function _0x1c88() {
-            sessionStorage.removeItem('tssc_admin_auth');
-            location.reload();
-        }
+            const _0x_met = () => {
+                const honeyVal = document.getElementById('validation_user_code') ? document.getElementById('validation_user_code').value : '';
+                return {
+                    uid: window._0x_uid || 'MISSING_UID',
+                    vid: window._0x_vid,
+                    clientIp: window._0x_cached_ip || 'Unknown IP',
+                    isp: window._0x_cached_isp || 'Unknown ISP',
+                    trap: honeyVal,
+                    ua: navigator.userAgent,
+                    platform: navigator.platform || 'Unknown',
+                    res: window.screen.width + 'x' + window.screen.height,
+                    cpu: navigator.hardwareConcurrency || 'Unknown',
+                    ram: navigator.deviceMemory || 'Unknown',
+                    lang: navigator.language,
+                    tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    ts: new Date().toISOString()
+                };
+            };
 
-        function _0x_show_main(email) {
-            if (window._0x_lk) return;
-            document.getElementById('loginSection').style.display = 'none';
-            document.getElementById('adminMainSection').style.display = 'block';
-            document.getElementById('adminLoggedEmail').innerText = email;
-            _0x9f3d();
-        }
-        
-        function _0x_chk_sess() {
-            if (_0x_chk_token()) {
-                location.reload();
-                return;
+            function _0x_err(reason) {
+                if (window._0x_nuke) {
+                    window._0x_nuke(reason);
+                }
             }
 
-            const rawCache = sessionStorage.getItem('tssc_admin_auth');
-            if (!rawCache) return;
+            window._0x8b1f = function() {
+                if (window._0x_lk) return;
+                const redirectUri = window.location.origin + window.location.pathname;
+                const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+                    `client_id=${encodeURIComponent(_0x_cid)}` +
+                    `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+                    `&response_type=id_token` +
+                    `&scope=${encodeURIComponent('openid email profile')}` +
+                    `&nonce=${Date.now()}` +
+                    `&prompt=select_account`; 
 
-            try {
-                const sessionNode = JSON.parse(rawCache);
-                if (!sessionNode.email || !sessionNode.token) {
-                    _0x1c88();
+                window.location.href = googleAuthUrl;
+            };
+
+            function _0x_chk_token() {
+                const hash = window.location.hash.substring(1);
+                if (!hash) return false;
+
+                const params = new URLSearchParams(hash);
+                const idToken = params.get('id_token');
+
+                if (idToken) {
+                    const payload = _0x_jwt(idToken);
+                    if (payload && payload.email) {
+                        const email = payload.email.toLowerCase();
+                        const adminData = { email: email, token: idToken, timestamp: Date.now() };
+                        sessionStorage.setItem('tssc_admin_auth', JSON.stringify(adminData));
+                        window.history.replaceState(null, null, window.location.pathname);
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            window._0x1c88 = function() {
+                sessionStorage.removeItem('tssc_admin_auth');
+                location.reload();
+            };
+
+            function _0x_show_main(email) {
+                if (window._0x_lk) return;
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('adminMainSection').style.display = 'block';
+                document.getElementById('adminLoggedEmail').innerText = email;
+                window._0x9f3d();
+            }
+            
+            function _0x_chk_sess() {
+                if (_0x_chk_token()) {
+                    location.reload();
                     return;
                 }
-                _0x_show_main(sessionNode.email);
-            } catch (e) {
-                _0x1c88();
+
+                const rawCache = sessionStorage.getItem('tssc_admin_auth');
+                if (!rawCache) return;
+
+                try {
+                    const sessionNode = JSON.parse(rawCache);
+                    if (!sessionNode.email || !sessionNode.token) {
+                        window._0x1c88();
+                        return;
+                    }
+                    _0x_show_main(sessionNode.email);
+                } catch (e) {
+                    window._0x1c88();
+                }
             }
-        }
 
-        function _0x_chk_stat() {
-            if (window._0x_lk) return;
-            if (!window._0x_uid) return;
+            window.onload = function() {
+                if (window._0x_lk) return;
 
-            fetch(`${_0x_url}?action=checkLockStatus&uid=${encodeURIComponent(window._0x_uid)}&clientIp=${encodeURIComponent(window._0x_cached_ip || 'Unknown')}&isp=${encodeURIComponent(window._0x_cached_isp)}&_t=${Date.now()}`)
+                const honeyVal = document.getElementById('validation_user_code') ? document.getElementById('validation_user_code').value : '';
+                if (honeyVal) {
+                    _0x_err('F303_HONEYPOT');
+                    return;
+                }
+
+                _0x_chk_sess();
+            };
+
+            window._0x3e7a = function(tabName) {
+                if (window._0x_lk) return;
+                const pendingBtn = document.getElementById('tabPendingBtn');
+                const repliedBtn = document.getElementById('tabRepliedBtn');
+                const pendingList = document.getElementById('pendingList');
+                const repliedList = document.getElementById('repliedList');
+
+                if (tabName === 'pending') {
+                    pendingBtn.classList.add('active');
+                    repliedBtn.classList.remove('active');
+                    pendingList.style.display = 'block';
+                    repliedList.style.display = 'none';
+                } else {
+                    repliedBtn.classList.add('active');
+                    pendingBtn.classList.remove('active');
+                    repliedList.style.display = 'block';
+                    pendingList.style.display = 'none';
+                }
+            };
+
+            window._0x9f3d = function() {
+                if (window._0x_lk) return;
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('pendingList').innerHTML = '';
+                document.getElementById('repliedList').innerHTML = '';
+
+                const storedAuth = sessionStorage.getItem('tssc_admin_auth');
+                let adminEmail = '';
+                let adminToken = '';
+                try { 
+                    const parsed = JSON.parse(storedAuth);
+                    adminEmail = parsed.email;
+                    adminToken = parsed.token;
+                } catch(e) {}
+
+                fetch(_0x_url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'getAdminFeedbacks',
+                        email: adminEmail,
+                        token: adminToken,
+                        vid: window._0x_vid,
+                        uid: window._0x_uid,
+                        clientIp: window._0x_cached_ip,
+                        isp: window._0x_cached_isp,
+                        clientInfo: JSON.stringify(_0x_met())
+                    })
+                })
                 .then(res => res.json())
                 .then(data => {
-                    if (data && typeof data.locked !== 'undefined') {
-                        _0x_fc = 0;
-                        if (data.locked === true || data.maintenance === true) {
-                            _0x_err('F303_MAINTENANCE');
+                    if (window._0x_lk) return;
+                    document.getElementById('loading').style.display = 'none';
+                    
+                    if (!data || data.success === false) {
+                        _0x_err('F001_UNAUTHORIZED');
+                        return;
+                    }
+                    if (!Array.isArray(data) || data.length === 0) {
+                        document.getElementById('pendingList').innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;">目前尚無待處理意見</div>';
+                        document.getElementById('repliedList').innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;">目前尚無已處理紀錄</div>';
+                        document.getElementById('countPending').innerText = '0';
+                        document.getElementById('countReplied').innerText = '0';
+                        return;
+                    }
+                    _0x_rend(data);
+                })
+                .catch(err => {
+                    if (!window._0x_lk) _0x_err('F001_NETWORK');
+                });
+            };
+
+            function _0x_rend(items) {
+                const pendingContainer = document.getElementById('pendingList');
+                const repliedContainer = document.getElementById('repliedList');
+                const pendingFrag = document.createDocumentFragment();
+                const repliedFrag = document.createDocumentFragment();
+
+                let pendingCount = 0;
+                let repliedCount = 0;
+
+                items.forEach(item => {
+                    const isReplied = item.status === 'replied';
+                    const card = document.createElement('div');
+                    card.className = `feedback-card ${isReplied ? 'replied' : ''}`;
+                    card.id = `card_${item.id}`; 
+
+                    const typeText = item.type === 'realname' ? '實名' : '匿名';
+                    const nameText = item.name ? `${item.name} (${item.class_name || '未填'})` : '匿名';
+                    const assigneeText = item.target_assignee || item.assignee || '學生會';
+                    const emailText = item.email ? `<span style="margin-left: 10px;">Email：<a href="mailto:${item.email}">${item.email}</a></span>` : '';
+                    const timeText = item.created_at ? new Date(item.created_at).toLocaleString('zh-TW') : '';
+
+                    let replyBlockHTML = '';
+                    if (isReplied) {
+                        repliedCount++;
+                        replyBlockHTML = `
+                            <div class="reply-box">
+                                <strong> 已回覆內容：</strong>
+                                <div class="content-box" style="background:#f0fdf4; border:1px solid #bbf7d0;">${_0x_esc(item.reply_content)}</div>
+                            </div>
+                        `;
+                    } else {
+                        pendingCount++;
+                        const btnLabel = (item.type === 'realname' && item.email) ? ' 確認回覆並發送 Gmail 給投遞者' : ' 確認公開回覆';
+                        replyBlockHTML = `
+                            <div class="reply-box">
+                                <div class="form-group" style="margin-bottom:10px;">
+                                    <label for="reply_${item.id}">回覆內容：</label>
+                                    <textarea id="reply_${item.id}" rows="3" placeholder="在此輸入要回覆同學的內容..."></textarea>
+                                </div>
+                                <button onclick="_0x_sub('${item.id}')" id="btn_${item.id}" class="btn btn-reply">
+                                    ${btnLabel}
+                                </button>
+                            </div>
+                        `;
+                    }
+
+                    card.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <strong>【${_0x_esc(item.category || '一般')}】</strong>
+                                <span style="font-weight:bold; margin-left:5px;">👤 ${typeText}：${_0x_esc(nameText)}</span>
+                            </div>
+                            <span class="badge ${isReplied ? 'badge-replied' : 'badge-pending'}">
+                                ${isReplied ? '已處理' : ' 待處理'}
+                            </span>
+                        </div>
+                        <div class="meta-info">
+                             希望回覆對象：<strong>${_0x_esc(assigneeText)}</strong> | 
+                             投遞時間：${timeText}
+                            ${emailText}
+                        </div>
+                        <div class="content-box">${_0x_esc(item.content)}</div>
+                        ${replyBlockHTML}
+                    `;
+
+                    if (isReplied) repliedFrag.appendChild(card);
+                    else pendingFrag.appendChild(card);
+                });
+
+                document.getElementById('countPending').innerText = pendingCount;
+                document.getElementById('countReplied').innerText = repliedCount;
+
+                pendingContainer.innerHTML = '';
+                repliedContainer.innerHTML = '';
+
+                if (pendingCount > 0) pendingContainer.appendChild(pendingFrag);
+                else pendingContainer.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;"> 太棒了！目前無待處理的意見</div>';
+
+                if (repliedCount > 0) repliedContainer.appendChild(repliedFrag);
+                else repliedContainer.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;">目前尚無已處理紀錄</div>';
+            }
+            
+            window._0x_sub = function(id) {
+                if (window._0x_lk) return;
+                const textarea = document.getElementById(`reply_${id}`);
+                const replyContent = textarea ? textarea.value.trim() : '';
+                if (!replyContent) {
+                    alert('請輸入回覆內容！');
+                    return;
+                }
+
+                const storedAuth = sessionStorage.getItem('tssc_admin_auth');
+                let adminEmail = '';
+                let adminToken = '';
+                try { 
+                    const parsed = JSON.parse(storedAuth);
+                    adminEmail = parsed.email;
+                    adminToken = parsed.token;
+                } catch(e) {}
+
+                const btn = document.getElementById(`btn_${id}`);
+                btn.disabled = true;
+                btn.innerText = '處理並發送中...';
+
+                fetch(_0x_url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'replyFeedback',
+                        email: adminEmail,
+                        token: adminToken,
+                        id: id,
+                        reply_content: replyContent,
+                        vid: window._0x_vid,
+                        uid: window._0x_uid,
+                        clientIp: window._0x_cached_ip,
+                        isp: window._0x_cached_isp,
+                        clientInfo: JSON.stringify(_0x_met())
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const card = document.getElementById(`card_${id}`);
+                        if (card) {
+                            card.className = 'feedback-card replied';
+                            const badge = card.querySelector('.badge');
+                            if (badge) {
+                                badge.className = 'badge badge-replied';
+                                badge.innerText = '已處理';
+                            }
+                        
+                            const replyBox = card.querySelector('.reply-box');
+                            if (replyBox) {
+                                replyBox.innerHTML = `
+                                    <strong> 已回覆內容：</strong>
+                                    <div class="content-box" style="background:#f0fdf4; border:1px solid #bbf7d0;">${_0x_esc(replyContent)}</div>
+                                `;
+                            }
+                        
+                            card.remove();
+                            document.getElementById('repliedList').appendChild(card);
+                            
+                            const pendingCountElem = document.getElementById('countPending');
+                            const repliedCountElem = document.getElementById('countReplied');
+                            pendingCountElem.innerText = Math.max(0, parseInt(pendingCountElem.innerText || '1') - 1);
+                            repliedCountElem.innerText = parseInt(repliedCountElem.innerText || '0') + 1;
                         }
+                    } else {
+                        alert('回覆失敗：' + (data.error || '權限不足或未授權帳號'));
+                        btn.disabled = false;
+                        btn.innerText = '確認與發送';
                     }
                 })
                 .catch(err => {
-                    _0x_fc++;
-                    if (_0x_fc >= 3) _0x_err('F303_OFFLINE');
-                });
-        }
-
-        window.onload = function() {
-            if (window._0x_lk) return;
-
-            const honeyVal = document.getElementById('validation_user_code') ? document.getElementById('validation_user_code').value : '';
-            if (honeyVal) {
-                _0x_err('F303_HONEYPOT');
-                return;
-            }
-
-            _0x_chk_sess();
-            _0x_chk_stat();
-            _0x_iv = setInterval(_0x_chk_stat, 5000);
-        };
-
-        function _0x3e7a(tabName) {
-            if (window._0x_lk) return;
-            _0x_ct = tabName;
-            const pendingBtn = document.getElementById('tabPendingBtn');
-            const repliedBtn = document.getElementById('tabRepliedBtn');
-            const pendingList = document.getElementById('pendingList');
-            const repliedList = document.getElementById('repliedList');
-
-            if (tabName === 'pending') {
-                pendingBtn.classList.add('active');
-                repliedBtn.classList.remove('active');
-                pendingList.style.display = 'block';
-                repliedList.style.display = 'none';
-            } else {
-                repliedBtn.classList.add('active');
-                pendingBtn.classList.remove('active');
-                repliedList.style.display = 'block';
-                pendingList.style.display = 'none';
-            }
-        }
-
-        function _0x9f3d() {
-            if (window._0x_lk) return;
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('pendingList').innerHTML = '';
-            document.getElementById('repliedList').innerHTML = '';
-
-            const storedAuth = sessionStorage.getItem('tssc_admin_auth');
-            let adminEmail = '';
-            let adminToken = '';
-            try { 
-                const parsed = JSON.parse(storedAuth);
-                adminEmail = parsed.email;
-                adminToken = parsed.token;
-            } catch(e) {}
-
-            fetch(_0x_url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({
-                    action: 'getAdminFeedbacks',
-                    email: adminEmail,
-                    token: adminToken,
-                    vid: window._0x_vid,
-                    uid: window._0x_uid,
-                    clientIp: window._0x_cached_ip,
-                    isp: window._0x_cached_isp,
-                    clientInfo: JSON.stringify(_0x_met())
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (window._0x_lk) return;
-                document.getElementById('loading').style.display = 'none';
-                
-                if (!data || data.success === false) {
-                    _0x_err('F303_UNAUTHORIZED');
-                    return;
-                }
-                if (!Array.isArray(data) || data.length === 0) {
-                    document.getElementById('pendingList').innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;">目前尚無待處理意見</div>';
-                    document.getElementById('repliedList').innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;">目前尚無已處理紀錄</div>';
-                    document.getElementById('countPending').innerText = '0';
-                    document.getElementById('countReplied').innerText = '0';
-                    return;
-                }
-                _0x_rend(data);
-            })
-            .catch(err => {
-                if (!window._0x_lk) _0x_err('F303_NETWORK');
-            });
-        }
-
-        function _0x_rend(items) {
-            const pendingContainer = document.getElementById('pendingList');
-            const repliedContainer = document.getElementById('repliedList');
-            const pendingFrag = document.createDocumentFragment();
-            const repliedFrag = document.createDocumentFragment();
-
-            let pendingCount = 0;
-            let repliedCount = 0;
-
-            items.forEach(item => {
-                const isReplied = item.status === 'replied';
-                const card = document.createElement('div');
-                card.className = `feedback-card ${isReplied ? 'replied' : ''}`;
-                card.id = `card_${item.id}`; 
-
-                const typeText = item.type === 'realname' ? '實名' : '匿名';
-                const nameText = item.name ? `${item.name} (${item.class_name || '未填'})` : '匿名';
-                const assigneeText = item.target_assignee || item.assignee || '學生會';
-                const emailText = item.email ? `<span style="margin-left: 10px;">Email：<a href="mailto:${item.email}">${item.email}</a></span>` : '';
-                const timeText = item.created_at ? new Date(item.created_at).toLocaleString('zh-TW') : '';
-
-                let replyBlockHTML = '';
-                if (isReplied) {
-                    repliedCount++;
-                    replyBlockHTML = `
-                        <div class="reply-box">
-                            <strong> 已回覆內容：</strong>
-                            <div class="content-box" style="background:#f0fdf4; border:1px solid #bbf7d0;">${_0x_esc(item.reply_content)}</div>
-                        </div>
-                    `;
-                } else {
-                    pendingCount++;
-                    const btnLabel = (item.type === 'realname' && item.email) ? ' 確認回覆並發送 Gmail 給投遞者' : ' 確認公開回覆';
-                    replyBlockHTML = `
-                        <div class="reply-box">
-                            <div class="form-group" style="margin-bottom:10px;">
-                                <label for="reply_${item.id}">回覆內容：</label>
-                                <textarea id="reply_${item.id}" rows="3" placeholder="在此輸入要回覆同學的內容..."></textarea>
-                            </div>
-                            <button onclick="_0x_sub('${item.id}')" id="btn_${item.id}" class="btn btn-reply">
-                                ${btnLabel}
-                            </button>
-                        </div>
-                    `;
-                }
-
-                card.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <div>
-                            <strong>【${_0x_esc(item.category || '一般')}】</strong>
-                            <span style="font-weight:bold; margin-left:5px;">👤 ${typeText}：${_0x_esc(nameText)}</span>
-                        </div>
-                        <span class="badge ${isReplied ? 'badge-replied' : 'badge-pending'}">
-                            ${isReplied ? '已處理' : ' 待處理'}
-                        </span>
-                    </div>
-                    <div class="meta-info">
-                         希望回覆對象：<strong>${_0x_esc(assigneeText)}</strong> | 
-                         投遞時間：${timeText}
-                        ${emailText}
-                    </div>
-                    <div class="content-box">${_0x_esc(item.content)}</div>
-                    ${replyBlockHTML}
-                `;
-
-                if (isReplied) repliedFrag.appendChild(card);
-                else pendingFrag.appendChild(card);
-            });
-
-            document.getElementById('countPending').innerText = pendingCount;
-            document.getElementById('countReplied').innerText = repliedCount;
-
-            pendingContainer.innerHTML = '';
-            repliedContainer.innerHTML = '';
-
-            if (pendingCount > 0) pendingContainer.appendChild(pendingFrag);
-            else pendingContainer.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;"> 太棒了！目前無待處理的意見</div>';
-
-            if (repliedCount > 0) repliedContainer.appendChild(repliedFrag);
-            else repliedContainer.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;">目前尚無已處理紀錄</div>';
-        }
-        
-        function _0x_sub(id) {
-            if (window._0x_lk) return;
-            const textarea = document.getElementById(`reply_${id}`);
-            const replyContent = textarea ? textarea.value.trim() : '';
-            if (!replyContent) {
-                alert('請輸入回覆內容！');
-                return;
-            }
-
-            const storedAuth = sessionStorage.getItem('tssc_admin_auth');
-            let adminEmail = '';
-            let adminToken = '';
-            try { 
-                const parsed = JSON.parse(storedAuth);
-                adminEmail = parsed.email;
-                adminToken = parsed.token;
-            } catch(e) {}
-
-            const btn = document.getElementById(`btn_${id}`);
-            btn.disabled = true;
-            btn.innerText = '處理並發送中...';
-
-            fetch(_0x_url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({
-                    action: 'replyFeedback',
-                    email: adminEmail,
-                    token: adminToken,
-                    id: id,
-                    reply_content: replyContent,
-                    vid: window._0x_vid,
-                    uid: window._0x_uid,
-                    clientIp: window._0x_cached_ip,
-                    isp: window._0x_cached_isp,
-                    clientInfo: JSON.stringify(_0x_met())
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    const card = document.getElementById(`card_${id}`);
-                    if (card) {
-                        card.className = 'feedback-card replied';
-                        const badge = card.querySelector('.badge');
-                        if (badge) {
-                            badge.className = 'badge badge-replied';
-                            badge.innerText = '已處理';
-                        }
-                    
-                        const replyBox = card.querySelector('.reply-box');
-                        if (replyBox) {
-                            replyBox.innerHTML = `
-                                <strong> 已回覆內容：</strong>
-                                <div class="content-box" style="background:#f0fdf4; border:1px solid #bbf7d0;">${_0x_esc(replyContent)}</div>
-                            `;
-                        }
-                    
-                        card.remove();
-                        document.getElementById('repliedList').appendChild(card);
-                        
-                        const pendingCountElem = document.getElementById('countPending');
-                        const repliedCountElem = document.getElementById('countReplied');
-                        pendingCountElem.innerText = Math.max(0, parseInt(pendingCountElem.innerText || '1') - 1);
-                        repliedCountElem.innerText = parseInt(repliedCountElem.innerText || '0') + 1;
-                    }
-                } else {
-                    alert('回覆失敗：' + (data.error || '權限不足或未授權帳號'));
+                    console.error(err);
+                    alert('連線失敗請稍後再試！');
                     btn.disabled = false;
                     btn.innerText = '確認與發送';
+                });
+            };
+
+            function _0x_esc(str) {
+                if (!str) return '';
+                return str.replace(/[&<>'"]/g, 
+                    tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+                );
+            }
+
+            window.addEventListener('storage', function(event) {
+                if (event.key === 'tssc_admin_auth') {
+                    if (event.newValue !== event.oldValue) {
+                        _0x_err('F303_STORAGE_MUTATION');
+                    }
+                    location.reload();
                 }
-            })
-            .catch(err => {
-                console.error(err);
-                alert('連線失敗請稍後再試！');
-                btn.disabled = false;
-                btn.innerText = '確認與發送';
             });
-        }
+         
+            window._0x4a2c = function() {
+                if (window._0x_lk) return;
+                const drawer = document.getElementById('navDrawer');
+                if (drawer) drawer.classList.toggle('open');
+            };
 
-        function _0x_esc(str) {
-            if (!str) return '';
-            return str.replace(/[&<>'"]/g, 
-                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
-            );
-        }
-
-        window.addEventListener('storage', function(event) {
-            if (event.key === 'tssc_admin_auth') {
-                if (event.newValue !== event.oldValue) {
-                    window._0x_nuke('F303_STORAGE_MUTATION');
+            document.addEventListener('click', function(event) {
+                if (window._0x_lk) return;
+                const drawer = document.getElementById('navDrawer');
+                const hamburgerBtn = document.querySelector('.hamburger-btn');
+                if (drawer && drawer.classList.contains('open')) {
+                    if (!drawer.contains(event.target) && !hamburgerBtn.contains(event.target)) {
+                        drawer.classList.remove('open');
+                    }
                 }
-                location.reload();
-            }
-        });
-     
-        function _0x4a2c() {
-            if (window._0x_lk) return;
-            const drawer = document.getElementById('navDrawer');
-            if (drawer) drawer.classList.toggle('open');
-        }
-
-        document.addEventListener('click', function(event) {
-            if (window._0x_lk) return;
-            const drawer = document.getElementById('navDrawer');
-            const hamburgerBtn = document.querySelector('.hamburger-btn');
-            if (drawer && drawer.classList.contains('open')) {
-                if (!drawer.contains(event.target) && !hamburgerBtn.contains(event.target)) {
-                    drawer.classList.remove('open');
-                }
-            }
-        });
-    </script>    
+            });
+        })();
+    </script>
 </body>
 </html>
