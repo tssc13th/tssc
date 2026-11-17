@@ -18,82 +18,105 @@
                 const keysToRemove = [];
                 for (let i = 0; i < localStorage.length; i++) {
                     const key = localStorage.key(i);
-                    if (key && (key.includes('skynet') || key.includes('b_flag') || key.includes('cached_client') || key.includes('SKYNET'))) {
+                    if (key && (key.includes('skynet_bad') || key.includes('b_flag'))) {
                         keysToRemove.push(key);
                     }
                 }
                 keysToRemove.forEach(k => localStorage.removeItem(k));
             } catch (e) {}
 
-            function _0x_getF001Html(reasonCode, serverUid, serverIp) {
-                return `<!DOCTYPE html>
-                <html lang="zh-TW">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Access Denied - F001</title>
-                    <style>
-                        body {
-                            margin: 0; background: #f8fafc; height: 100vh; display: flex;
-                            flex-direction: column; align-items: center; justify-content: center;
-                            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #1e293b; padding: 20px; box-sizing: border-box;
+            function _0x_genHardwareUid() {
+                try {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = 200;
+                    canvas.height = 50;
+                    ctx.textBaseline = "top";
+                    ctx.font = "14px 'Arial'";
+                    ctx.fillStyle = "#f60";
+                    ctx.fillRect(10, 10, 100, 30);
+                    ctx.fillStyle = "#069";
+                    ctx.fillText("SKYNET-HW-ID", 2, 15);
+                    const cvsData = canvas.toDataURL();
+
+                    let glRenderer = 'unknown';
+                    try {
+                        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                        if (gl) {
+                            const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                            if (debugInfo) {
+                                glRenderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                            }
                         }
-                        .error-card {
-                            background: #ffffff; max-width: 600px; width: 100%; padding: 30px;
-                            border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border-top: 5px solid #ef4444;
-                            box-sizing: border-box; text-align: left;
-                        }
-                        .error-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-                        .error-code { font-size: 24px; font-weight: 700; color: #ef4444; }
-                        .error-title { font-size: 18px; font-weight: 600; color: #0f172a; margin: 0; }
-                        .error-desc { font-size: 14px; color: #64748b; line-height: 1.6; margin-bottom: 20px; }
-                        .meta-box {
-                            background: #f1f5f9; padding: 12px 16px; border-radius: 8px; font-family: monospace;
-                            font-size: 12px; color: #334155; word-break: break-all; margin-bottom: 20px; border: 1px solid #e2e8f0;
-                        }
-                        .meta-box span { display: block; margin-bottom: 4px; }
-                        .footer-note { font-size: 12px; color: #94a3b8; text-align: center; margin-top: 15px; }
-                    </style>
-                </head>
-                <body>
-                    <div class="error-card">
-                        <div class="error-header">
-                            <div>
-                                <div class="error-code">F001 系統安全攔截</div>
-                                <h1 class="error-title">裝置認證失敗或未取得授權 UID</h1>
-                            </div>
-                        </div>
-                        <p class="error-desc">
-                            後端伺服器未檢驗到合法的系統認證，天網系統已接管，目前系統停止連線
-                        </p>
-                        <div class="meta-box">
-                            <span><strong>Assigned UID:</strong> ${serverUid || 'PENDING_SERVER_ISSUE'}</span>
-                            <span><strong>Client IP:</strong> ${serverIp || 'DETECTING...'}</span>
-                            <span><strong>Reason Code:</strong> ${reasonCode || 'F001_GAS_UNAUTHORIZED'}</span>
-                            <span><strong>Timestamp:</strong> ${new Date().toISOString()}</span>
-                        </div>
-                        <div style="text-align: right;">
-                            <button onclick="location.reload()" style="background: #0f172a; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-size: 14px; cursor: pointer;">重新整理並向 GAS 申請認證</button>
-                        </div>
-                    </div>
-                    <div class="footer-note">Skynet Security Gateway &bull; TSSC13TH Protected System</div>
-                </body>
-                </html>`;
+                    } catch (e) {}
+
+                    const rawSig = [
+                        window.screen.width + 'x' + window.screen.height + 'x' + window.screen.colorDepth,
+                        navigator.hardwareConcurrency || '',
+                        navigator.deviceMemory || '',
+                        navigator.platform || '',
+                        Intl.DateTimeFormat().resolvedOptions().timeZone,
+                        glRenderer,
+                        cvsData.slice(-64)
+                    ].join('||');
+
+                    let hash = 0x811c9dc5;
+                    for (let i = 0; i < rawSig.length; i++) {
+                        hash ^= rawSig.charCodeAt(i);
+                        hash = Math.imul(hash, 0x01000193);
+                    }
+                    const hexHash = (hash >>> 0).toString(16).toUpperCase().padStart(8, '0');
+                    return 'SKYNET-HW-' + hexHash;
+                } catch (e) {
+                    return 'SKYNET-FALLBACK-' + (window.screen.width * window.screen.height);
+                }
+            }
+
+            let _0x_uid = localStorage.getItem('skynet_device_uid');
+            if (!_0x_uid) {
+                _0x_uid = _0x_genHardwareUid();
+                localStorage.setItem('skynet_device_uid', _0x_uid);
+            } else {
+                if (!_0x_uid.startsWith('SKYNET-')) {
+                    window._0x_nuke && window._0x_nuke('F303_UID_TAMPERED');
+                }
+            }
+            window._0x_uid = _0x_uid;
+
+            let _0x_vid = sessionStorage.getItem('diag_probe_sig');
+            if (!_0x_vid) {
+                _0x_vid = 'VID_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
+                sessionStorage.setItem('diag_probe_sig', _0x_vid);
+            }
+            window._0x_vid = _0x_vid;
+
+            window._0x_cached_ip = 'Allowed_Bypass_IP';
+            window._0x_cached_isp = 'Bypass_ISP';
+
+    
+            function _0x_getF001Html() {
+                return `<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><title>F001 天網系統</title><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>body{margin:0;background:#f8f9fa;height:100vh;display:flex;align-items:center;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#202124;padding:20px;box-sizing:border-box}.error-card{background:#ffffff;max-width:540px;width:100%;padding:40px;border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,0.08);text-align:center;box-sizing:border-box}.error-code{font-size:13px;font-weight:600;color:#d93025;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}.error-title{font-size:24px;font-weight:500;margin-bottom:16px;color:#202124}.error-desc{font-size:14px;color:#5f6368;line-height:1.6;margin-bottom:28px}.robot-img{width:90px;height:auto;margin-bottom:20px}.footer-info{font-size:11px;color:#9aa0a6;border-top:1px solid #f1f3f4;padding-top:16px;font-family:monospace}</style></head><body><div class="error-card"><img src="https://www.google.com/images/errors/robot.png" alt="Robot" class="robot-img"><div class="error-code">Error Code: F001</div><h1 class="error-title">存取遭到系統安全防護攔截</h1><p class="error-desc">偵測到無效的來源簽章、瀏覽器環境遭篡改，或您的裝置金鑰未通過 Skynet 閘道校驗。為了保護管理後台安全，此連線已被終止。</p><div class="footer-info">Skynet Security Gateway &bull; TSSC13TH Protected Node</div></div></body></html>`;
             }
             window._0x_getF001Html = _0x_getF001Html;
 
-            window._0x_nuke = function(specificReason = 'F303_SECURITY_VIOLATION', serverUid = 'NONE', serverIp = 'NONE') {
+            window._0x_nuke = function(specificReason = 'F303_SECURITY_VIOLATION') {
                 if (window._0x_lk) return;
                 window._0x_lk = true;
 
-                sessionStorage.clear();
+
+                try {
+                    sessionStorage.clear();
+                    localStorage.clear();
+                } catch (e) {}
 
                 try {
                     const bodyData = {
                         action: 'logTamper',
                         code: 'F303',
-                        uid: serverUid,
-                        clientIp: serverIp,
+                        uid: window._0x_uid || 'MISSING_UID',
+                        vid: window._0x_vid,
+                        clientIp: window._0x_cached_ip,
+                        isp: window._0x_cached_isp,
                         details: `[SKYNET_F303_INTERCEPT] SpecificCode: ${specificReason}`
                     };
 
@@ -105,47 +128,14 @@
                 } catch (e) {}
 
                 setTimeout(() => {
-                    document.open();
-                    document.write(_0x_getF001Html(specificReason, serverUid, serverIp));
-                    document.close();
-                }, 30);
-            };
-
-            window._0x_initSkynetHandshake = function(callback) {
-                const browserMeta = {
-                    ua: navigator.userAgent,
-                    platform: navigator.platform || 'Unknown',
-                    res: window.screen.width + 'x' + window.screen.height,
-                    lang: navigator.language,
-                    tz: Intl.DateTimeFormat().resolvedOptions().timeZone
-                };
-
-                fetch(_0x_url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({
-                        action: 'handshakeAuth',
-                        clientMeta: browserMeta
-                    })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (!data || !data.success || !data.uid || !data.clientIp) {
-                        window._0x_nuke('F001_GAS_REJECTED', data ? data.uid : 'NO_UID', data ? data.ip : 'NO_IP');
-                        return;
+                    try {
+                        document.open();
+                        document.write(_0x_getF001Html());
+                        document.close();
+                    } catch (e) {
+                        window.location.href = 'about:blank';
                     }
-                    window._0x_uid = data.uid;
-                    window._0x_cached_ip = data.clientIp;
-                    window._0x_cached_isp = data.isp || 'GAS_VERIFIED';
-                    
-                    sessionStorage.setItem('skynet_server_uid', data.uid);
-                    sessionStorage.setItem('skynet_server_ip', data.clientIp);
-
-                    if (typeof callback === 'function') callback();
-                })
-                .catch(err => {
-                    window._0x_nuke('F001_HANDSHAKE_NETWORK_ERROR', 'OFFLINE', 'OFFLINE');
-                });
+                }, 10);
             };
 
             window.addEventListener('keydown', function(e) {
@@ -156,13 +146,13 @@
                 if (isF12 || isDevShortcut || isViewSource) {
                     e.preventDefault();
                     e.stopPropagation();
-                    window._0x_nuke('F303_KEY_INTERCEPT', window._0x_uid, window._0x_cached_ip);
+                    window._0x_nuke('F303_KEY_INTERCEPT');
                 }
             }, true);
 
             window.addEventListener('contextmenu', function(e) {
                 e.preventDefault();
-                window._0x_nuke('F303_CONTEXT_MENU', window._0x_uid, window._0x_cached_ip);
+                window._0x_nuke('F303_CONTEXT_MENU');
             });
         })();
     </script>
@@ -262,16 +252,27 @@
             const _0x_met = () => {
                 const honeyVal = document.getElementById('validation_user_code') ? document.getElementById('validation_user_code').value : '';
                 return {
-                    uid: window._0x_uid || sessionStorage.getItem('skynet_server_uid') || 'MISSING_UID',
-                    clientIp: window._0x_cached_ip || sessionStorage.getItem('skynet_server_ip') || 'MISSING_IP',
-                    isp: window._0x_cached_isp || 'GAS_VERIFIED',
+                    uid: window._0x_uid || 'MISSING_UID',
+                    vid: window._0x_vid,
+                    clientIp: window._0x_cached_ip || 'Allowed_Bypass_IP',
+                    isp: window._0x_cached_isp || 'Bypass_ISP',
                     trap: honeyVal,
                     ua: navigator.userAgent,
                     platform: navigator.platform || 'Unknown',
                     res: window.screen.width + 'x' + window.screen.height,
+                    cpu: navigator.hardwareConcurrency || 'Unknown',
+                    ram: navigator.deviceMemory || 'Unknown',
+                    lang: navigator.language,
+                    tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
                     ts: new Date().toISOString()
                 };
             };
+
+            function _0x_err(reason) {
+                if (window._0x_nuke) {
+                    window._0x_nuke(reason);
+                }
+            }
 
             window._0x8b1f = function() {
                 if (window._0x_lk) return;
@@ -344,15 +345,18 @@
             window.onload = function() {
                 if (window._0x_lk) return;
 
-                const honeyVal = document.getElementById('validation_user_code') ? document.getElementById('validation_user_code').value : '';
-                if (honeyVal) {
-                    window._0x_nuke('F303_HONEYPOT', window._0x_uid, window._0x_cached_ip);
+                if (!window._0x_uid || !window._0x_uid.startsWith('SKYNET-')) {
+                    _0x_err('F303_INVALID_UID');
                     return;
                 }
 
-                window._0x_initSkynetHandshake(function() {
-                    _0x_chk_sess();
-                });
+                const honeyVal = document.getElementById('validation_user_code') ? document.getElementById('validation_user_code').value : '';
+                if (honeyVal) {
+                    _0x_err('F303_HONEYPOT');
+                    return;
+                }
+
+                _0x_chk_sess();
             };
 
             window._0x3e7a = function(tabName) {
@@ -397,6 +401,10 @@
                         action: 'getAdminFeedbacks',
                         email: adminEmail,
                         token: adminToken,
+                        vid: window._0x_vid,
+                        uid: window._0x_uid,
+                        clientIp: window._0x_cached_ip,
+                        isp: window._0x_cached_isp,
                         clientInfo: JSON.stringify(_0x_met())
                     })
                 })
@@ -406,7 +414,7 @@
                     document.getElementById('loading').style.display = 'none';
                     
                     if (!data || data.success === false) {
-                        window._0x_nuke('F001_UNAUTHORIZED_SESSION', window._0x_uid, window._0x_cached_ip);
+                        _0x_err('F001_UNAUTHORIZED');
                         return;
                     }
                     if (!Array.isArray(data) || data.length === 0) {
@@ -543,6 +551,10 @@
                         token: adminToken,
                         id: id,
                         reply_content: replyContent,
+                        vid: window._0x_vid,
+                        uid: window._0x_uid,
+                        clientIp: window._0x_cached_ip,
+                        isp: window._0x_cached_isp,
                         clientInfo: JSON.stringify(_0x_met())
                     })
                 })
@@ -601,7 +613,7 @@
             window.addEventListener('storage', function(event) {
                 if (event.key === 'tssc_admin_auth') {
                     if (event.newValue !== event.oldValue) {
-                        window._0x_nuke('F303_STORAGE_MUTATION', window._0x_uid, window._0x_cached_ip);
+                        _0x_err('F303_STORAGE_MUTATION');
                     }
                     location.reload();
                 }
