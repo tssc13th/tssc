@@ -18,74 +18,14 @@
                 const keysToRemove = [];
                 for (let i = 0; i < localStorage.length; i++) {
                     const key = localStorage.key(i);
-                    if (key && (key.includes('skynet') || key.includes('b_flag') || key.includes('cached_client'))) {
+                    if (key && (key.includes('skynet') || key.includes('b_flag') || key.includes('cached_client') || key.includes('SKYNET'))) {
                         keysToRemove.push(key);
                     }
                 }
                 keysToRemove.forEach(k => localStorage.removeItem(k));
             } catch (e) {}
 
-            function _0x_genHardwareUid() {
-                try {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    canvas.width = 200;
-                    canvas.height = 50;
-                    ctx.textBaseline = "top";
-                    ctx.font = "14px 'Arial'";
-                    ctx.fillStyle = "#f60";
-                    ctx.fillRect(10, 10, 100, 30);
-                    ctx.fillStyle = "#069";
-                    ctx.fillText("SKYNET-HW-ID", 2, 15);
-                    const cvsData = canvas.toDataURL();
-
-                    let glRenderer = 'unknown';
-                    try {
-                        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-                        if (gl) {
-                            const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-                            if (debugInfo) {
-                                glRenderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-                            }
-                        }
-                    } catch (e) {}
-
-                    const rawSig = [
-                        window.screen.width + 'x' + window.screen.height + 'x' + window.screen.colorDepth,
-                        navigator.hardwareConcurrency || '',
-                        navigator.deviceMemory || '',
-                        navigator.platform || '',
-                        Intl.DateTimeFormat().resolvedOptions().timeZone,
-                        glRenderer,
-                        cvsData.slice(-64)
-                    ].join('||');
-
-                    let hash = 0x811c9dc5;
-                    for (let i = 0; i < rawSig.length; i++) {
-                        hash ^= rawSig.charCodeAt(i);
-                        hash = Math.imul(hash, 0x01000193);
-                    }
-                    const hexHash = (hash >>> 0).toString(16).toUpperCase().padStart(8, '0');
-                    return 'SKYNET-HW-' + hexHash;
-                } catch (e) {
-                    return 'SKYNET-FALLBACK-' + (window.screen.width * window.screen.height);
-                }
-            }
-
-            const _0x_uid = _0x_genHardwareUid();
-            window._0x_uid = _0x_uid;
-
-            let _0x_vid = sessionStorage.getItem('diag_probe_sig');
-            if (!_0x_vid) {
-                _0x_vid = 'VID_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
-                sessionStorage.setItem('diag_probe_sig', _0x_vid);
-            }
-            window._0x_vid = _0x_vid;
-
-            window._0x_cached_ip = 'Allowed_Bypass_IP';
-            window._0x_cached_isp = 'Bypass_ISP';
-
-            function _0x_getF001Html(reasonCode) {
+            function _0x_getF001Html(reasonCode, serverUid, serverIp) {
                 return `<!DOCTYPE html>
                 <html lang="zh-TW">
                 <head>
@@ -120,20 +60,20 @@
                         <div class="error-header">
                             <div>
                                 <div class="error-code">F001 系統安全攔截</div>
-                                <h1 class="error-title">存取請求未獲授權或已失效</h1>
+                                <h1 class="error-title">裝置認證失敗或未取得授權 UID</h1>
                             </div>
                         </div>
                         <p class="error-desc">
-                            由於安全檢核未通過、憑證過期或來源不符，天網系統已強制終止本次工作階段
+                            後端伺服器未檢驗到合法的系統認證，天網系統已接管，目前系統停止連線
                         </p>
                         <div class="meta-box">
-                            <span><strong>Device UID:</strong> ${window._0x_uid || 'UNKNOWN'}</span>
-                            <span><strong>Session VID:</strong> ${window._0x_vid || 'UNKNOWN'}</span>
-                            <span><strong>Reason Code:</strong> ${reasonCode || 'F001_SECURITY_VIOLATION'}</span>
+                            <span><strong>Assigned UID:</strong> ${serverUid || 'PENDING_SERVER_ISSUE'}</span>
+                            <span><strong>Client IP:</strong> ${serverIp || 'DETECTING...'}</span>
+                            <span><strong>Reason Code:</strong> ${reasonCode || 'F001_GAS_UNAUTHORIZED'}</span>
                             <span><strong>Timestamp:</strong> ${new Date().toISOString()}</span>
                         </div>
                         <div style="text-align: right;">
-                            <button onclick="location.reload()" style="background: #0f172a; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-size: 14px; cursor: pointer;">重新嘗試載入</button>
+                            <button onclick="location.reload()" style="background: #0f172a; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-size: 14px; cursor: pointer;">重新整理並向 GAS 申請認證</button>
                         </div>
                     </div>
                     <div class="footer-note">Skynet Security Gateway &bull; TSSC13TH Protected System</div>
@@ -142,21 +82,18 @@
             }
             window._0x_getF001Html = _0x_getF001Html;
 
-            window._0x_nuke = function(specificReason = 'F303_SECURITY_VIOLATION') {
+            window._0x_nuke = function(specificReason = 'F303_SECURITY_VIOLATION', serverUid = 'NONE', serverIp = 'NONE') {
                 if (window._0x_lk) return;
                 window._0x_lk = true;
 
                 sessionStorage.clear();
-                localStorage.clear();
 
                 try {
                     const bodyData = {
                         action: 'logTamper',
                         code: 'F303',
-                        uid: window._0x_uid || 'MISSING_UID',
-                        vid: window._0x_vid,
-                        clientIp: window._0x_cached_ip,
-                        isp: window._0x_cached_isp,
+                        uid: serverUid,
+                        clientIp: serverIp,
                         details: `[SKYNET_F303_INTERCEPT] SpecificCode: ${specificReason}`
                     };
 
@@ -169,9 +106,46 @@
 
                 setTimeout(() => {
                     document.open();
-                    document.write(_0x_getF001Html(specificReason));
+                    document.write(_0x_getF001Html(specificReason, serverUid, serverIp));
                     document.close();
                 }, 30);
+            };
+
+            window._0x_initSkynetHandshake = function(callback) {
+                const browserMeta = {
+                    ua: navigator.userAgent,
+                    platform: navigator.platform || 'Unknown',
+                    res: window.screen.width + 'x' + window.screen.height,
+                    lang: navigator.language,
+                    tz: Intl.DateTimeFormat().resolvedOptions().timeZone
+                };
+
+                fetch(_0x_url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'handshakeAuth',
+                        clientMeta: browserMeta
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (!data || !data.success || !data.uid || !data.clientIp) {
+                        window._0x_nuke('F001_GAS_REJECTED', data ? data.uid : 'NO_UID', data ? data.ip : 'NO_IP');
+                        return;
+                    }
+                    window._0x_uid = data.uid;
+                    window._0x_cached_ip = data.clientIp;
+                    window._0x_cached_isp = data.isp || 'GAS_VERIFIED';
+                    
+                    sessionStorage.setItem('skynet_server_uid', data.uid);
+                    sessionStorage.setItem('skynet_server_ip', data.clientIp);
+
+                    if (typeof callback === 'function') callback();
+                })
+                .catch(err => {
+                    window._0x_nuke('F001_HANDSHAKE_NETWORK_ERROR', 'OFFLINE', 'OFFLINE');
+                });
             };
 
             window.addEventListener('keydown', function(e) {
@@ -182,13 +156,13 @@
                 if (isF12 || isDevShortcut || isViewSource) {
                     e.preventDefault();
                     e.stopPropagation();
-                    window._0x_nuke('F303_KEY_INTERCEPT');
+                    window._0x_nuke('F303_KEY_INTERCEPT', window._0x_uid, window._0x_cached_ip);
                 }
             }, true);
 
             window.addEventListener('contextmenu', function(e) {
                 e.preventDefault();
-                window._0x_nuke('F303_CONTEXT_MENU');
+                window._0x_nuke('F303_CONTEXT_MENU', window._0x_uid, window._0x_cached_ip);
             });
         })();
     </script>
@@ -288,27 +262,16 @@
             const _0x_met = () => {
                 const honeyVal = document.getElementById('validation_user_code') ? document.getElementById('validation_user_code').value : '';
                 return {
-                    uid: window._0x_uid || 'MISSING_UID',
-                    vid: window._0x_vid,
-                    clientIp: window._0x_cached_ip || 'Allowed_Bypass_IP',
-                    isp: window._0x_cached_isp || 'Bypass_ISP',
+                    uid: window._0x_uid || sessionStorage.getItem('skynet_server_uid') || 'MISSING_UID',
+                    clientIp: window._0x_cached_ip || sessionStorage.getItem('skynet_server_ip') || 'MISSING_IP',
+                    isp: window._0x_cached_isp || 'GAS_VERIFIED',
                     trap: honeyVal,
                     ua: navigator.userAgent,
                     platform: navigator.platform || 'Unknown',
                     res: window.screen.width + 'x' + window.screen.height,
-                    cpu: navigator.hardwareConcurrency || 'Unknown',
-                    ram: navigator.deviceMemory || 'Unknown',
-                    lang: navigator.language,
-                    tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
                     ts: new Date().toISOString()
                 };
             };
-
-            function _0x_err(reason) {
-                if (window._0x_nuke) {
-                    window._0x_nuke(reason);
-                }
-            }
 
             window._0x8b1f = function() {
                 if (window._0x_lk) return;
@@ -383,11 +346,13 @@
 
                 const honeyVal = document.getElementById('validation_user_code') ? document.getElementById('validation_user_code').value : '';
                 if (honeyVal) {
-                    _0x_err('F303_HONEYPOT');
+                    window._0x_nuke('F303_HONEYPOT', window._0x_uid, window._0x_cached_ip);
                     return;
                 }
 
-                _0x_chk_sess();
+                window._0x_initSkynetHandshake(function() {
+                    _0x_chk_sess();
+                });
             };
 
             window._0x3e7a = function(tabName) {
@@ -432,10 +397,6 @@
                         action: 'getAdminFeedbacks',
                         email: adminEmail,
                         token: adminToken,
-                        vid: window._0x_vid,
-                        uid: window._0x_uid,
-                        clientIp: window._0x_cached_ip,
-                        isp: window._0x_cached_isp,
                         clientInfo: JSON.stringify(_0x_met())
                     })
                 })
@@ -445,7 +406,7 @@
                     document.getElementById('loading').style.display = 'none';
                     
                     if (!data || data.success === false) {
-                        _0x_err('F001_UNAUTHORIZED');
+                        window._0x_nuke('F001_UNAUTHORIZED_SESSION', window._0x_uid, window._0x_cached_ip);
                         return;
                     }
                     if (!Array.isArray(data) || data.length === 0) {
@@ -582,10 +543,6 @@
                         token: adminToken,
                         id: id,
                         reply_content: replyContent,
-                        vid: window._0x_vid,
-                        uid: window._0x_uid,
-                        clientIp: window._0x_cached_ip,
-                        isp: window._0x_cached_isp,
                         clientInfo: JSON.stringify(_0x_met())
                     })
                 })
@@ -644,7 +601,7 @@
             window.addEventListener('storage', function(event) {
                 if (event.key === 'tssc_admin_auth') {
                     if (event.newValue !== event.oldValue) {
-                        _0x_err('F303_STORAGE_MUTATION');
+                        window._0x_nuke('F303_STORAGE_MUTATION', window._0x_uid, window._0x_cached_ip);
                     }
                     location.reload();
                 }
