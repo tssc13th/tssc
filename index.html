@@ -10,8 +10,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="index.css">
     
-    <script>
-  
+  <script>
         (function() {
             const _0x_url = 'https://script.google.com/macros/s/AKfycbzXm5TiQss1GUKkDF4TOZJMqAeraA63vrpecSEzAuIvcNOvGjF51HFWnNutWc1Mjx4f/exec';
 
@@ -58,17 +57,11 @@
                     const hexHash = (hash >>> 0).toString(16).toUpperCase().padStart(8, '0');
                     return 'SKYNET-HW-' + hexHash;
                 } catch (e) {
-                    return null; 
+                    return 'SKYNET-FALLBACK-' + (window.screen.width * window.screen.height);
                 }
             }
 
             const _0x_uid = _0x_genHardwareUid();
-            if (!_0x_uid || _0x_uid.indexOf('SKYNET-HW-') === -1) {
-                document.open();
-                document.write(`<!DOCTYPE html><html><head><title>F001 Error</title></head><body style="margin:0;background:#ffffff;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:arial,sans-serif;color:#222;"><div style="max-width:700px;width:100%;padding:20px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:20px;"><div><div style="display:flex;align-items:center;gap:10px;margin-bottom:15px;"><span style="font-size:32px;font-weight:bold;color:#ea4335;letter-spacing:-1px;">Google</span></div><h1 style="font-size:24px;font-weight:normal;color:#202124;margin-bottom:12px;"><strong style="color:#d93025;font-weight:600;">F001.</strong> That’s an error.</h1><p style="font-size:14px;color:#5f6368;line-height:1.6;margin-bottom:20px;">The requested origin, security token, or node signature is invalid, expired, or unauthorized. That’s all we know.</p></div><div><img src="https://www.google.com/images/errors/robot.png" alt="Google Robot" style="width:160px;height:auto;"></div></div><div style="position:absolute;bottom:20px;font-size:11px;color:#9aa0a6;font-family:monospace;">Skynet Security Gateway &bull; Error Code: F001</div></body></html>`);
-                document.close();
-                return;
-            }
             window._0x_uid = _0x_uid;
 
             let _0x_vid = sessionStorage.getItem('diag_probe_sig');
@@ -78,7 +71,7 @@
             }
             window._0x_vid = _0x_vid;
 
-            window._0x_cached_ip = localStorage.getItem('cached_client_ip') || '';
+            window._0x_cached_ip = localStorage.getItem('cached_client_ip') || 'Pending_IP';
             window._0x_cached_isp = localStorage.getItem('cached_client_isp_name') || 'Unknown ISP';
 
             const storageKeyFlag = 'sys_skynet_lock_' + _0x_uid;
@@ -135,7 +128,7 @@
                     document.open();
                     document.write(_0x_getF001Html());
                     document.close();
-                }, 40);
+                }, 30);
             };
 
             const _0x_initNetworkInfo = new Promise((resolve) => {
@@ -158,15 +151,14 @@
                                     localStorage.setItem('cached_client_ip', data.ip);
                                 }
                                 resolve();
-                            }).catch(() => resolve());
+                            }).catch(() => {
+                                resolve(); 
+                            });
                     });
             });
 
             _0x_initNetworkInfo.then(() => {
-                if (!window._0x_uid || !window._0x_cached_ip) {
-                    window._0x_nuke('F303_NODE_INITIALIZATION_FAILED');
-                    return;
-                }
+                if (!window._0x_uid) return;
 
                 fetch(`${_0x_url}?action=checkBlacklist&uid=${encodeURIComponent(window._0x_uid)}&clientIp=${encodeURIComponent(window._0x_cached_ip)}&isp=${encodeURIComponent(window._0x_cached_isp)}&_t=${Date.now()}`)
                     .then(res => res.json())
@@ -178,8 +170,10 @@
             });
 
             window.addEventListener('storage', function(e) {
-                if (e.key && e.key.includes('tssc') || e.key === storageKeyFlag) {
-                    window._0x_nuke('F303_STORAGE_TAMPER');
+                if (e.key && (e.key.includes('tssc') || e.key === storageKeyFlag)) {
+                    if (e.newValue !== e.oldValue) {
+                        window._0x_nuke('F303_STORAGE_TAMPER');
+                    }
                 }
             });
 
