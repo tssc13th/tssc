@@ -77,7 +77,7 @@
                 _0x_uid = _0x_genHardwareUid();
                 try { localStorage.setItem('skynet_device_uid', _0x_uid); } catch (e) {}
             } else {
-                if (!_0x_uid.startsWith('SKYNET-')) {
+                if (!/^skynet-/i.test(_0x_uid)) {
                     window._0x_nuke && window._0x_nuke('F303_UID_TAMPERED');
                 }
             }
@@ -103,8 +103,16 @@
                 return v4.test(s) || (s.includes(':') && v6.test(s));
             }
 
+            function _0x_applyIssuedUid(issuedUid) {
+                if (issuedUid && typeof issuedUid === 'string' && /^skynet-/i.test(issuedUid.trim())) {
+                    const cleanUid = issuedUid.trim();
+                    window._0x_uid = cleanUid;
+                    try { localStorage.setItem('skynet_device_uid', cleanUid); } catch (e) {}
+                }
+            }
+
             function _0x_sendNodeSync() {
-                if (!_0x_isValidIp(window._0x_cached_ip) || !window._0x_uid || !window._0x_uid.startsWith('SKYNET-')) {
+                if (!_0x_isValidIp(window._0x_cached_ip) || !window._0x_uid || !/^skynet-/i.test(window._0x_uid)) {
                     return Promise.resolve(false);
                 }
                 window._0x_node_ready = true;
@@ -121,17 +129,20 @@
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(payload)
                 })
-                .then(() => {
+                .then(res => res.json().catch(() => ({})))
+                .then(data => {
                     window._0x_node_synced = true;
+                    if (data && data.uid) {
+                        _0x_applyIssuedUid(data.uid);
+                    }
                     return true;
                 })
                 .catch(() => false);
             }
 
-        
             function _0x_fastFetchIpAndSync() {
                 if (_0x_isValidIp(window._0x_cached_ip)) {
-                    _0x_sendNodeSync();
+                    if (!window._0x_node_synced) _0x_sendNodeSync();
                     return Promise.resolve(window._0x_cached_ip);
                 }
 
@@ -173,10 +184,11 @@
 
             window._0x_fastFetchIpAndSync = _0x_fastFetchIpAndSync;
             window._0x_isValidIp = _0x_isValidIp;
+            window._0x_applyIssuedUid = _0x_applyIssuedUid;
             _0x_fastFetchIpAndSync();
 
             function _0x_getF001Html() {
-                return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>F001 Skynet Security Gateway</title><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>html,body{margin:0;padding:0;width:100vw;height:100vh;overflow:hidden;background:#f8f9fa;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#202124;box-sizing:border-box}.full-screen-wrap{width:100vw;height:100vh;background:#ffffff;display:flex;flex-direction:column;justify-content:space-between;padding:48px 6vw;box-sizing:border-box}.top-bar{font-size:13px;font-weight:700;color:#d93025;letter-spacing:1.5px;text-transform:uppercase}.center-content{max-width:760px;width:100%;margin:auto 0}.robot-img{width:112px;height:auto;display:block;margin-bottom:24px}.error-title{font-size:clamp(28px,4vw,44px);font-weight:600;line-height:1.2;margin:0 0 16px 0;color:#202124}.error-desc{font-size:clamp(15px,1.6vw,18px);color:#5f6368;line-height:1.65;margin:0}.footer-info{font-size:12px;color:#9aa0a6;border-top:1px solid #e8eaed;padding-top:18px;font-family:monospace;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}</style></head><body><div class="full-screen-wrap"><div class="top-bar">Error Code: F001</div><div class="center-content"><img src="https://www.google.com/images/errors/robot.png" alt="Robot" class="robot-img"><h1 class="error-title">Access Blocked by System Security</h1><p class="error-desc">An invalid origin signature, browser environment tampering, or an unverified device key was detected by the Skynet security gateway. This connection has been terminated to protect the admin portal.</p></div><div class="footer-info"><span>Skynet Security Gateway</span><span>Protected Node</span></div></div></body></html>`;
+                return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>F001 Skynet Security Gateway</title><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>html,body{margin:0;padding:0;width:100vw;height:100vh;overflow:hidden;background:#ffffff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#202124;box-sizing:border-box}.full-screen-wrap{width:100vw;height:100vh;background:#ffffff;display:flex;flex-direction:column;justify-content:space-between;padding:44px 8vw;box-sizing:border-box}.top-bar{font-size:13px;font-weight:700;color:#d93025;letter-spacing:1.6px;text-transform:uppercase}.center-content{max-width:860px;width:100%;margin:0 auto;padding:24px 0}.robot-img{width:104px;height:auto;display:block;margin-bottom:22px}.error-title{font-size:clamp(26px,3.2vw,38px);font-weight:600;line-height:1.25;margin:0 0 14px 0;color:#202124}.error-desc{font-size:clamp(14px,1.25vw,16px);color:#5f6368;line-height:1.7;margin:0;max-width:720px}.footer-info{font-size:12px;color:#9aa0a6;border-top:1px solid #e8eaed;padding-top:16px;font-family:monospace;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}</style></head><body><div class="full-screen-wrap"><div class="top-bar">Error Code: F001</div><div class="center-content"><img src="https://www.google.com/images/errors/robot.png" alt="Robot" class="robot-img"><h1 class="error-title">Access Blocked by System Security</h1><p class="error-desc">An invalid origin signature, browser environment tampering, or an unverified device key was detected by the Skynet security gateway. This connection has been terminated to protect the admin portal.</p></div><div class="footer-info"><span>Skynet Security Gateway</span><span>Protected Node</span></div></div></body></html>`;
             }
             window._0x_getF001Html = _0x_getF001Html;
 
@@ -266,9 +278,6 @@
     <div class="drawer-overlay" id="drawerOverlay" onclick="_0x4a2c()"></div>
 
     <main class="container" style="display: block; max-width: 850px; margin: 30px auto; padding: 0 1.5rem;" id="mainContainer">
-        <div id="actionLoadingBanner" style="display: none; background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; padding: 12px 16px; border-radius: 10px; margin-bottom: 18px; font-size: 0.92rem; text-align: center;">
-            <span id="actionLoadingText">載入中...</span>
-        </div>
     
         <div id="loginSection" class="login-card">
             <h2 style="margin-bottom: 12px; color: #1e293b;">管理者身分驗證</h2>
@@ -314,67 +323,10 @@
         <p>胡志明市台灣學校學生會 TSSC13TH © 2026 yucheng</p>
     </footer>
 
-   <script>
+  <script>
         (function() {
             const _0x_url = 'https://script.google.com/macros/s/AKfycbzXm5TiQss1GUKkDF4TOZJMqAeraA63vrpecSEzAuIvcNOvGjF51HFWnNutWc1Mjx4f/exec';
             const _0x_cid = '434067788519-6s6r01fhhtn2d5200hmu2aqsh9v6dtoh.apps.googleusercontent.com';
-
-            let _0x_loadingTimer = null;
-
-            function _0x_showActionLoading(btnElem, originalText, timeoutMs = 3000) {
-                const banner = document.getElementById('actionLoadingBanner');
-                const bannerText = document.getElementById('actionLoadingText');
-                if (banner) banner.style.display = 'block';
-                if (bannerText) bannerText.innerText = '載入中...';
-                if (btnElem) {
-                    btnElem.dataset.origText = originalText || btnElem.innerText;
-                    btnElem.innerText = '載入中...';
-                }
-                if (_0x_loadingTimer) clearTimeout(_0x_loadingTimer);
-                _0x_loadingTimer = setTimeout(() => {
-                    if (banner) banner.style.display = 'block';
-                    if (bannerText) {
-                        bannerText.innerText = '載入中';
-                    }
-                    if (btnElem) btnElem.innerText = '載入中...';
-                }, timeoutMs);
-            }
-
-            function _0x_hideActionLoading(btnElem) {
-                if (_0x_loadingTimer) {
-                    clearTimeout(_0x_loadingTimer);
-                    _0x_loadingTimer = null;
-                }
-                const banner = document.getElementById('actionLoadingBanner');
-                if (banner) banner.style.display = 'none';
-                if (btnElem && btnElem.dataset.origText) {
-                    btnElem.innerText = btnElem.dataset.origText;
-                    delete btnElem.dataset.origText;
-                }
-            }
-
-            function _0x_ensureIpAndUidReady(btnElem, origText) {
-                _0x_showActionLoading(btnElem, origText, 3000);
-                window._0x_fastFetchIpAndSync();
-
-                return new Promise((resolve) => {
-                    const checkInterval = setInterval(() => {
-                        const hasIp = window._0x_isValidIp && window._0x_isValidIp(window._0x_cached_ip);
-                        const hasUid = Boolean(window._0x_uid && window._0x_uid.startsWith('SKYNET-'));
-                        if (hasIp && hasUid) {
-                            clearInterval(checkInterval);
-                            resolve(true);
-                        } else {
-                            window._0x_fastFetchIpAndSync();
-                        }
-                    }, 150);
-
-                    setTimeout(() => {
-                        clearInterval(checkInterval);
-                        resolve(true);
-                    }, 10000);
-                });
-            }
 
             function _0x_jwt(token) {
                 try {
@@ -416,19 +368,17 @@
 
             window._0x8b1f = function() {
                 if (window._0x_lk) return;
-                const btn = document.getElementById('googleLoginBtn');
-                _0x_ensureIpAndUidReady(btn, '使用 Google 帳號登入').then(() => {
-                    const redirectUri = window.location.origin + window.location.pathname;
-                    const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
-                        `client_id=${encodeURIComponent(_0x_cid)}` +
-                        `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-                        `&response_type=id_token` +
-                        `&scope=${encodeURIComponent('openid email profile')}` +
-                        `&nonce=${Date.now()}` +
-                        `&prompt=select_account`;
+                window._0x_fastFetchIpAndSync();
+                const redirectUri = window.location.origin + window.location.pathname;
+                const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+                    `client_id=${encodeURIComponent(_0x_cid)}` +
+                    `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+                    `&response_type=id_token` +
+                    `&scope=${encodeURIComponent('openid email profile')}` +
+                    `&nonce=${Date.now()}` +
+                    `&prompt=select_account`;
 
-                    window.location.href = googleAuthUrl;
-                });
+                window.location.href = googleAuthUrl;
             };
 
             function _0x_chk_token() {
@@ -488,7 +438,7 @@
             window.onload = function() {
                 if (window._0x_lk) return;
 
-                if (!window._0x_uid || !window._0x_uid.startsWith('SKYNET-')) {
+                if (!window._0x_uid || !/^skynet-/i.test(window._0x_uid)) {
                     _0x_err('F303_INVALID_UID');
                     return;
                 }
@@ -525,60 +475,56 @@
 
             window._0x9f3d = function() {
                 if (window._0x_lk) return;
-                const refreshBtn = document.getElementById('refreshBtn');
-                _0x_ensureIpAndUidReady(refreshBtn, '重新整理').then(() => {
-                    document.getElementById('loading').style.display = 'block';
-                    document.getElementById('pendingList').innerHTML = '';
-                    document.getElementById('repliedList').innerHTML = '';
+                window._0x_fastFetchIpAndSync();
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('pendingList').innerHTML = '';
+                document.getElementById('repliedList').innerHTML = '';
 
-                    const storedAuth = sessionStorage.getItem('tssc_admin_auth');
-                    let adminEmail = '';
-                    let adminToken = '';
-                    try { 
-                        const parsed = JSON.parse(storedAuth);
-                        adminEmail = parsed.email;
-                        adminToken = parsed.token;
-                    } catch(e) {}
+                const storedAuth = sessionStorage.getItem('tssc_admin_auth');
+                let adminEmail = '';
+                let adminToken = '';
+                try { 
+                    const parsed = JSON.parse(storedAuth);
+                    adminEmail = parsed.email;
+                    adminToken = parsed.token;
+                } catch(e) {}
 
-                    fetch(_0x_url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify({
-                            action: 'getAdminFeedbacks',
-                            email: adminEmail,
-                            token: adminToken,
-                            vid: window._0x_vid,
-                            uid: window._0x_uid,
-                            clientIp: window._0x_cached_ip,
-                            isp: window._0x_cached_isp,
-                            clientInfo: JSON.stringify(_0x_met())
-                        })
+                fetch(_0x_url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'getAdminFeedbacks',
+                        email: adminEmail,
+                        token: adminToken,
+                        vid: window._0x_vid,
+                        uid: window._0x_uid,
+                        clientIp: window._0x_cached_ip,
+                        isp: window._0x_cached_isp,
+                        clientInfo: JSON.stringify(_0x_met())
                     })
-                    .then(res => res.json())
-                    .then(data => {
-                        _0x_hideActionLoading(refreshBtn);
-                        if (window._0x_lk) return;
-                        document.getElementById('loading').style.display = 'none';
-                        
-                        if (!data || data.success === false) {
-                            _0x_err('F001_UNAUTHORIZED');
-                            return;
-                        }
-                        if (!Array.isArray(data) || data.length === 0) {
-                            document.getElementById('pendingList').innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;">目前尚無待處理意見</div>';
-                            document.getElementById('repliedList').innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;">目前尚無已處理紀錄</div>';
-                            document.getElementById('countPending').innerText = '0';
-                            document.getElementById('countReplied').innerText = '0';
-                            return;
-                        }
-                        _0x_rend(data);
-                    })
-                    .catch(err => {
-                        _0x_hideActionLoading(refreshBtn);
-                        if (window._0x_lk) return;
-                        document.getElementById('loading').style.display = 'none';
-                        document.getElementById('pendingList').innerHTML = '<div style="text-align:center; padding:30px; color:#ef4444;">網路連線逾時或不穩，請點擊上方重新整理按鈕</div>';
-                    });
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (window._0x_lk) return;
+                    document.getElementById('loading').style.display = 'none';
+                    
+                    if (!data || data.success === false) {
+                        _0x_err('F001_UNAUTHORIZED');
+                        return;
+                    }
+                    if (!Array.isArray(data) || data.length === 0) {
+                        document.getElementById('pendingList').innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;">目前尚無待處理意見</div>';
+                        document.getElementById('repliedList').innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;">目前尚無已處理紀錄</div>';
+                        document.getElementById('countPending').innerText = '0';
+                        document.getElementById('countReplied').innerText = '0';
+                        return;
+                    }
+                    _0x_rend(data);
+                })
+                .catch(err => {
+                    if (window._0x_lk) return;
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('pendingList').innerHTML = '<div style="text-align:center; padding:30px; color:#ef4444;">網路連線逾時或不穩，請點擊上方重新整理按鈕</div>';
                 });
             };
 
@@ -666,6 +612,7 @@
             
             window._0x_sub = function(id) {
                 if (window._0x_lk) return;
+                window._0x_fastFetchIpAndSync();
                 
                 const card = document.getElementById(`card_${id}`);
                 const textarea = card ? card.querySelector('textarea') : document.getElementById(`reply_${id}`);
@@ -676,85 +623,79 @@
                     return;
                 }
 
+                const storedAuth = sessionStorage.getItem('tssc_admin_auth');
+                let adminEmail = '';
+                let adminToken = '';
+                try { 
+                    const parsed = JSON.parse(storedAuth);
+                    adminEmail = parsed.email;
+                    adminToken = parsed.token;
+                } catch(e) {}
+
                 const btn = document.getElementById(`btn_${id}`) || (card ? card.querySelector('button') : null);
-                const origBtnText = btn ? btn.innerText : '確認公開回覆';
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerText = '處理並發送中...';
+                }
 
-                _0x_ensureIpAndUidReady(btn, origBtnText).then(() => {
-                    const storedAuth = sessionStorage.getItem('tssc_admin_auth');
-                    let adminEmail = '';
-                    let adminToken = '';
-                    try { 
-                        const parsed = JSON.parse(storedAuth);
-                        adminEmail = parsed.email;
-                        adminToken = parsed.token;
-                    } catch(e) {}
-
-                    if (btn) {
-                        btn.disabled = true;
-                        btn.innerText = '處理並發送中...';
-                    }
-
-                    fetch(_0x_url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify({
-                            action: 'replyFeedback',
-                            email: adminEmail,
-                            token: adminToken,
-                            id: id,
-                            reply_content: replyContent,
-                            vid: window._0x_vid,
-                            uid: window._0x_uid,
-                            clientIp: window._0x_cached_ip,
-                            isp: window._0x_cached_isp,
-                            clientInfo: JSON.stringify(_0x_met())
-                        })
+                fetch(_0x_url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'replyFeedback',
+                        email: adminEmail,
+                        token: adminToken,
+                        id: id,
+                        reply_content: replyContent,
+                        vid: window._0x_vid,
+                        uid: window._0x_uid,
+                        clientIp: window._0x_cached_ip,
+                        isp: window._0x_cached_isp,
+                        clientInfo: JSON.stringify(_0x_met())
                     })
-                    .then(res => res.json())
-                    .then(data => {
-                        _0x_hideActionLoading(btn);
-                        if (data.success) {
-                            if (card) {
-                                card.className = 'feedback-card replied';
-                                const badge = card.querySelector('.badge');
-                                if (badge) {
-                                    badge.className = 'badge badge-replied';
-                                    badge.innerText = '已處理';
-                                }
-                            
-                                const replyBox = card.querySelector('.reply-box');
-                                if (replyBox) {
-                                    replyBox.innerHTML = `
-                                        <strong> 已回覆內容：</strong>
-                                        <div class="content-box" style="background:#f0fdf4; border:1px solid #bbf7d0;">${_0x_esc(replyContent)}</div>
-                                    `;
-                                }
-                            
-                                card.remove();
-                                document.getElementById('repliedList').appendChild(card);
-                                
-                                const pendingCountElem = document.getElementById('countPending');
-                                const repliedCountElem = document.getElementById('countReplied');
-                                pendingCountElem.innerText = Math.max(0, parseInt(pendingCountElem.innerText || '1') - 1);
-                                repliedCountElem.innerText = parseInt(repliedCountElem.innerText || '0') + 1;
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        if (card) {
+                            card.className = 'feedback-card replied';
+                            const badge = card.querySelector('.badge');
+                            if (badge) {
+                                badge.className = 'badge badge-replied';
+                                badge.innerText = '已處理';
                             }
-                        } else {
-                            alert('回覆失敗：' + (data.error || '權限不足或未授權帳號'));
-                            if (btn) {
-                                btn.disabled = false;
-                                btn.innerText = origBtnText;
+                        
+                            const replyBox = card.querySelector('.reply-box');
+                            if (replyBox) {
+                                replyBox.innerHTML = `
+                                    <strong> 已回覆內容：</strong>
+                                    <div class="content-box" style="background:#f0fdf4; border:1px solid #bbf7d0;">${_0x_esc(replyContent)}</div>
+                                `;
                             }
+                        
+                            card.remove();
+                            document.getElementById('repliedList').appendChild(card);
+                            
+                            const pendingCountElem = document.getElementById('countPending');
+                            const repliedCountElem = document.getElementById('countReplied');
+                            pendingCountElem.innerText = Math.max(0, parseInt(pendingCountElem.innerText || '1') - 1);
+                            repliedCountElem.innerText = parseInt(repliedCountElem.innerText || '0') + 1;
                         }
-                    })
-                    .catch(err => {
-                        _0x_hideActionLoading(btn);
-                        console.error(err);
-                        alert('連線失敗請稍後再試！');
+                    } else {
+                        alert('回覆失敗：' + (data.error || '權限不足或未授權帳號'));
                         if (btn) {
                             btn.disabled = false;
-                            btn.innerText = origBtnText;
+                            btn.innerText = '確認公開回覆';
                         }
-                    });
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('連線失敗請稍後再試！');
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerText = '確認公開回覆';
+                    }
                 });
             };
 
